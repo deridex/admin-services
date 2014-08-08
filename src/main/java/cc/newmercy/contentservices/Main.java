@@ -6,6 +6,7 @@ import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
 public class Main {
@@ -22,7 +23,8 @@ public class Main {
       servletHandler.setContextPath("/");
 
       ServletHolder servletHolder = new ServletHolder(new DispatcherServlet());
-      servletHolder.getInitParameters().put("contextConfigLocation", "classpath:content-services.xml");
+      servletHolder.getInitParameters().put("contextClass", AnnotationConfigWebApplicationContext.class.getName());
+      servletHolder.getInitParameters().put("contextConfigLocation", ContentServicesConfiguration.class.getName());
 
       servletHandler.addServlet(servletHolder, "/content/*");
 
