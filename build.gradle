@@ -1,0 +1,63 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+repositories {
+	mavenCentral()
+}
+
+configurations {
+	provided
+	
+	all*.exclude group: 'commons-logging', module: 'commons-logging'
+	all*.exclude group: 'org.eclipse.jetty.orbit', module: 'javax.servlet'
+}
+
+eclipse {
+	jdt {
+		sourceCompatibility = javaVersion
+		targetCompatibility = javaVersion
+	}
+
+	classpath {
+		plusConfigurations += configurations.provided
+
+		noExportConfigurations += configurations.provided
+		
+		containers.remove('org.eclipse.jdt.launching.JRE_CONTAINER')
+		containers.add("org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-${javaVersion}")
+	}
+}
+
+dependencies {
+	compile 'javax.servlet:javax.servlet-api:3.1.0',
+			"org.slf4j:slf4j-api:${slf4jVersion}",
+			'com.google.guava:guava:17.0',
+			"com.fasterxml.jackson.core:jackson-core:${jacksonVersion}",
+			"com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}",
+			"com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}",
+			"com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:${jacksonVersion}",
+			"org.springframework:spring-webmvc:${springFrameworkVersion}",
+			"org.springframework:spring-aop:${springFrameworkVersion}",
+			'org.aspectj:aspectjweaver:1.8.1',
+			"org.eclipse.jetty:jetty-server:${jettyVersion}",
+			"org.eclipse.jetty:jetty-servlet:${jettyVersion}",
+			"org.eclipse.jetty:jetty-servlets:${jettyVersion}",
+			"org.eclipse.jetty:jetty-jmx:${jettyVersion}",
+			"com.codahale.metrics:metrics-annotation:${metricsVersion}",
+			"com.codahale.metrics:metrics-core:${metricsVersion}"
+
+	runtime "org.slf4j:jcl-over-slf4j:${slf4jVersion}",
+			'ch.qos.logback:logback-classic:1.1.2',
+			'org.hibernate:hibernate-validator:5.1.2.Final',
+			'javax.validation:validation-api:1.1.0.Final',
+			'javax.el:javax.el-api:2.2.4',
+			'org.glassfish.web:javax.el:2.2.4'
+
+	testCompile 'junit:junit:4.11',
+			'org.mockito:mockito-core:1.9.5',
+			'joda-time:joda-time:2.3',
+			"org.hamcrest:hamcrest-core:${hamcrestVersion}",
+			"org.hamcrest:hamcrest-library:${hamcrestVersion}"
+
+	testRuntime 'org.apache.httpcomponents:httpclient:4.3.3'
+}

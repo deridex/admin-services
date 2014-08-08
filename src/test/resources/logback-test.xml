@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<contextName>content-services</contextName>
+	<jmxConfigurator/>
+
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d [%-30thread] %-5level %-40.40logger{40} - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<logger name="org.springframework" level="debug" />
+	
+	<logger name="org.eclipse.jetty.servlet" level="debug" />
+	
+	<logger name="org.eclipse.jetty.server.handler" level="debug" />
+	
+	<logger name="cc.newmercy" level="debug" />
+
+	<root level="warn">
+		<appender-ref ref="STDOUT"/>
+	</root>
+</configuration>
