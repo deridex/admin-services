@@ -44,6 +44,6 @@ public class ContentServicesConfiguration {
 
 	@Bean
 	public SermonSeriesController sermonSeriesController() {
-		return new SermonSeriesController();
+		return new SermonSeriesController(validator());
 	}
 }
