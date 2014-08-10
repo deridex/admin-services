@@ -1,4 +1,4 @@
-package cc.newmercy.contentservices.sermonseries;
+package cc.newmercy.contentservices.v1.sermonseries;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.URL;

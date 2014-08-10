@@ -3,9 +3,14 @@ package cc.newmercy.contentservices;
 import java.lang.management.ManagementFactory;
 
 import org.eclipse.jetty.jmx.MBeanContainer;
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
+import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.util.resource.Resource;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
@@ -19,27 +24,54 @@ public class Main {
 			MBeanContainer mbContainer = new MBeanContainer(ManagementFactory.getPlatformMBeanServer());
       server.addBean(mbContainer);
 
-      ServletContextHandler servletHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
+      ContextHandler servletHandler = newServletHandler();
       servletHandler.setContextPath("/");
 
-      ServletHolder servletHolder = new ServletHolder(new DispatcherServlet());
-      servletHolder.getInitParameters().put("contextClass", AnnotationConfigWebApplicationContext.class.getName());
-      servletHolder.getInitParameters().put("contextConfigLocation", ContentServicesConfiguration.class.getName());
+      ContextHandler jsResourceHandler = newClasspathResourceHandler("/js");
+      jsResourceHandler.setContextPath("/js");
 
-      servletHandler.addServlet(servletHolder, "/content/*");
+      ContextHandler appResourceHandler = newClasspathResourceHandler("/app");
+      appResourceHandler.setContextPath("/app");
 
-      server.setHandler(servletHandler);
+      ContextHandlerCollection handlerCollection = new ContextHandlerCollection();
+      handlerCollection.setHandlers(new Handler[] { servletHandler, jsResourceHandler, appResourceHandler });
 
+			server.setHandler(handlerCollection);
 			server.start();
 			server.join();
+		} catch (RuntimeException e) {
+			throw e;
 		} catch (Exception e) {
+			throw new IllegalArgumentException(e);
+		} finally {
 			try {
 				server.stop();
-			} catch (Exception stopExc) {
-				stopExc.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-
-			throw new IllegalArgumentException("port " + 8080, e);
 		}
+	}
+
+	private static ContextHandler newServletHandler() {
+    ServletContextHandler servletHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
+
+    ServletHolder servletHolder = new ServletHolder(DispatcherServlet.class);
+    servletHolder.getInitParameters().put("contextClass", AnnotationConfigWebApplicationContext.class.getName());
+    servletHolder.getInitParameters().put("contextConfigLocation", ContentServicesConfiguration.class.getName());
+
+    servletHandler.addServlet(servletHolder, "/api/*");
+
+    return servletHandler;
+	}
+
+	private static ContextHandler newClasspathResourceHandler(String topLevelDir) {
+		ResourceHandler resourceHandler = new ResourceHandler();
+		resourceHandler.setBaseResource(Resource.newClassPathResource(topLevelDir));
+		resourceHandler.setEtags(true);
+
+		ContextHandler contextHandler = new ContextHandler();
+		contextHandler.setHandler(resourceHandler);
+
+		return contextHandler;
 	}
 }

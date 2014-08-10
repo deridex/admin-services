@@ -1,4 +1,4 @@
-package cc.newmercy.contentservices.sermonseries;
+package cc.newmercy.contentservices.v1.sermonseries;
 
 public class SermonSeries {
 

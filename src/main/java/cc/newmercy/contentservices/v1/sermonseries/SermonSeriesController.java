@@ -1,4 +1,4 @@
-package cc.newmercy.contentservices.sermonseries;
+package cc.newmercy.contentservices.v1.sermonseries;
 
 import java.util.List;
 import java.util.Objects;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-@RequestMapping(value = "/sermonseries", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/v1/sermonseries", produces = MediaType.APPLICATION_JSON_VALUE)
 public class SermonSeriesController {
 
 	private final Validator validator;
@@ -45,14 +45,14 @@ public class SermonSeriesController {
 
 		PersistentSermonSeries persistentSermonSeries = new PersistentSermonSeries(transientSermonSeries);
 
-		persistentSermonSeries.setId("");
+		persistentSermonSeries.setId("abcdefg");
 
 		return persistentSermonSeries;
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	@ResponseBody
-	public SermonSeries get(@PathVariable("id") String id) {
-		return new SermonSeries();
+	public PersistentSermonSeries get(@PathVariable("id") String id) {
+		return new PersistentSermonSeries();
 	}
 }

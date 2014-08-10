@@ -12,7 +12,7 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 
-import cc.newmercy.contentservices.sermonseries.SermonSeriesController;
+import cc.newmercy.contentservices.v1.sermonseries.SermonSeriesController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
