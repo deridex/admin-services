@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="contentControllers">
+<html lang="en" ng-app="contentApp">
 <head>
 <meta charset="utf-8">
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular.min.js"></script>
@@ -10,6 +10,12 @@
 <script src="/app/app.js"></script>
 </head>
 <body>
-foo
+<div data-ng-controller="sermonSeriesCtrl">
+	<div data-ng-repeat="sermonSeries in sermonSeriesList">
+		<div>{{ sermonSeries.id }}</div>
+		<div>{{ sermonSeries.name }}</div>
+		<div>{{ sermonSeries.description }}</div>
+	</div>
+</div>
 </body>
 </html>

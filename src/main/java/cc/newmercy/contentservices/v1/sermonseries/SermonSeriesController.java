@@ -1,5 +1,6 @@
 package cc.newmercy.contentservices.v1.sermonseries;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -28,10 +29,22 @@ public class SermonSeriesController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	@ResponseBody
-	public List<SermonSeries> list(
+	public List<PersistentSermonSeries> list(
 			@RequestParam(required = false) String startId,
 			@RequestParam(defaultValue = "10") @Min(1) int maxResults) {
-		return null;
+		List<PersistentSermonSeries> sermonSeriesList = new ArrayList<>();
+
+		for (int i = 1000; i < 1004; i++) {
+			PersistentSermonSeries persistentSermonSeries = new PersistentSermonSeries();
+
+			persistentSermonSeries.setId(Integer.toString(i));
+			persistentSermonSeries.setName("persistent sermon series name " + i);
+			persistentSermonSeries.setDescription("persistent sermon series description " + i);
+
+			sermonSeriesList.add(persistentSermonSeries);
+		}
+
+		return sermonSeriesList;
 	}
 
 	@RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)

@@ -55,7 +55,7 @@ public class Main {
 	private static ContextHandler newServletHandler() {
     ServletContextHandler servletHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
 
-    ServletHolder servletHolder = new ServletHolder(DispatcherServlet.class);
+    ServletHolder servletHolder = new ServletHolder(new DispatcherServlet());
     servletHolder.getInitParameters().put("contextClass", AnnotationConfigWebApplicationContext.class.getName());
     servletHolder.getInitParameters().put("contextConfigLocation", ContentServicesConfiguration.class.getName());
 

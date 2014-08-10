@@ -1,8 +1,9 @@
 angular.module('contentServices', ['restangular'])
-		.factory('sermonSeriesService', ['Restangular', function(Restangular) {
-			var restangular = Restangular.withConfig(function(RestangularConfigurer) {
+		.factory('contentApi', ['Restangular', function(Restangular) {
+			return Restangular.withConfig(function(RestangularConfigurer) {
 				RestangularConfigurer.setBaseUrl('/api/v1');
+				RestangularConfigurer.setDefaultHeaders({
+					Accept: 'application/json'
+				});
 			});
-			
-			return restangular.service('sermonseries');
 		}]);
