@@ -21,8 +21,7 @@ public class Main {
 		Server server = new Server(port);
 
 		try {
-			MBeanContainer mbContainer = new MBeanContainer(ManagementFactory.getPlatformMBeanServer());
-      server.addBean(mbContainer);
+			server.addBean(new MBeanContainer(ManagementFactory.getPlatformMBeanServer()));
 
       ContextHandler servletHandler = newServletHandler();
       servletHandler.setContextPath("/");
