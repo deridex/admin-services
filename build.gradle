@@ -61,3 +61,7 @@ dependencies {
 
 	testRuntime 'org.apache.httpcomponents:httpclient:4.3.3'
 }
+
+task wrapper(type: Wrapper) {
+	gradleVersion = '2.0'
+}
