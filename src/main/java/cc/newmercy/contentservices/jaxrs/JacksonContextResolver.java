@@ -1,16 +1,17 @@
 package cc.newmercy.contentservices.jaxrs;
 
+import java.util.Objects;
+
 import javax.ws.rs.ext.ContextResolver;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Preconditions;
 
 public class JacksonContextResolver implements ContextResolver<ObjectMapper> {
 
 	private final ObjectMapper jsonMapper;
 
 	public JacksonContextResolver(ObjectMapper jsonMapper) {
-		this.jsonMapper = Preconditions.checkNotNull(jsonMapper, "json mapper");;
+		this.jsonMapper = Objects.requireNonNull(jsonMapper, "json mapper");;
 	}
 
 	@Override
