@@ -10,6 +10,8 @@
         </encoder>
     </appender>
 
+		<logger name="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping" level="info" />
+		
     <logger name="cc.newmercy.contentservices" level="info" />
     
     <!-- Set this to trace if you suspect json typos are preventing your controllers from getting invoked. -->

@@ -1,11 +1,9 @@
-package cc.newmercy.contentservices.v1.sermonseries;
+package cc.newmercy.contentservices.web.api.v1.sermonseries;
 
 import java.util.Objects;
 
-import javax.validation.constraints.Pattern;
-
 public class PersistentSermonSeries extends SermonSeriesCommonFields {
-	@Pattern(regexp = "[0-9a-z]+")
+
 	private String id;
 
 	public PersistentSermonSeries() {
@@ -32,6 +30,10 @@ public class PersistentSermonSeries extends SermonSeriesCommonFields {
 	public boolean equals(Object o) {
 		if (!(o instanceof PersistentSermonSeries)) {
 			return false;
+		}
+
+		if (this == o) {
+			return true;
 		}
 
 		PersistentSermonSeries other = (PersistentSermonSeries) o;

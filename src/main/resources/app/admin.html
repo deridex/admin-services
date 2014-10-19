@@ -10,12 +10,35 @@
 <script src="/app/app.js"></script>
 </head>
 <body>
-<div data-ng-controller="sermonSeriesCtrl">
+<nav>
+	<ul>
+		<li>List</li>
+		<li>Add</li>
+	</ul>
+</nav>
+<section data-ng-controller="sermonSeriesListCtrl">
 	<div data-ng-repeat="sermonSeries in sermonSeriesList">
-		<div>{{ sermonSeries.id }}</div>
-		<div>{{ sermonSeries.name }}</div>
-		<div>{{ sermonSeries.description }}</div>
+		<div>{{sermonSeries.id}}</div>
+		<div>{{sermonSeries.name}}</div>
+		<div>{{sermonSeries.description}}</div>
 	</div>
-</div>
+</section>
+<section data-ng-controller="sermonSeriesAddCtrl">
+	<form name="sermonSeriesForm" novalidate>
+		<div>
+			<label>Name</label>
+			<input name="name" type="text" placeholder="Sermon Series Title" data-ng-model="name">
+		</div>
+		<div>
+			<label>Description</label>
+			<textarea name="description" placeholder="Sermon Series Description" data-ng-model="description"></textarea>
+		</div>
+		<button type="submit" data-ng-click="save()">Add</button>
+	</form>
+	<div>
+		<div>{{name}}</div>
+		<div>{{description}}</div>
+	</div>
+</section>
 </body>
 </html>

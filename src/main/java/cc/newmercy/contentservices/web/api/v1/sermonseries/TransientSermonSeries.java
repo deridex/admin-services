@@ -1,4 +1,4 @@
-package cc.newmercy.contentservices.v1.sermonseries;
+package cc.newmercy.contentservices.web.api.v1.sermonseries;
 
 import java.util.Objects;
 
