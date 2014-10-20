@@ -49,6 +49,7 @@ dependencies {
 			"com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:${jacksonVersion}",
 			"org.springframework:spring-webmvc:${springFrameworkVersion}",
 			"org.springframework:spring-aop:${springFrameworkVersion}",
+			"org.springframework:spring-tx:${springFrameworkVersion}",
 			'org.aspectj:aspectjweaver:1.8.1',
 			"org.eclipse.jetty:jetty-server:${jettyVersion}",
 			"org.eclipse.jetty:jetty-servlet:${jettyVersion}",
@@ -56,6 +57,8 @@ dependencies {
 			"org.eclipse.jetty:jetty-jmx:${jettyVersion}",
 			"com.codahale.metrics:metrics-annotation:${metricsVersion}",
 			"com.codahale.metrics:metrics-core:${metricsVersion}",
+			'org.hibernate:hibernate-validator:5.1.2.Final',
+			'javax.validation:validation-api:1.1.0.Final',
 			'javax.ws.rs:javax.ws.rs-api:2.0.1'
 
 	runtime('org.glassfish.jersey.core:jersey-client:2.6') {
@@ -66,8 +69,6 @@ dependencies {
 
 	runtime "org.slf4j:jcl-over-slf4j:${slf4jVersion}",
 			'ch.qos.logback:logback-classic:1.1.2',
-			'org.hibernate:hibernate-validator:5.1.2.Final',
-			'javax.validation:validation-api:1.1.0.Final',
 			'javax.el:javax.el-api:2.2.4',
 			'org.glassfish.web:javax.el:2.2.4'
 
