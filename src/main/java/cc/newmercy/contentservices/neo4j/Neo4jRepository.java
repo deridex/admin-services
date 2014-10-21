@@ -3,6 +3,7 @@ package cc.newmercy.contentservices.neo4j;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
@@ -11,6 +12,7 @@ import javax.ws.rs.core.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import cc.newmercy.contentservices.neo4j.json.Datum;
 import cc.newmercy.contentservices.neo4j.json.Statement;
 import cc.newmercy.contentservices.neo4j.json.TransactionRequest;
 import cc.newmercy.contentservices.neo4j.json.TransactionResponse;
@@ -50,5 +52,11 @@ public class Neo4jRepository {
 		}
 
 		return response;
+	}
+
+	protected final <T> T post(String cyperQuery, Map<String, Object> parameters, Function<Datum, T> mapper) {
+		TransactionResponse response = post(cyperQuery, parameters);
+
+		return mapper.apply(response.getResults().get(0).getData().get(0));
 	}
 }

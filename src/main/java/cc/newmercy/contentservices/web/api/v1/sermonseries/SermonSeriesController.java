@@ -55,13 +55,9 @@ public class SermonSeriesController {
 			throw new ConstraintViolationException(violations);
 		}
 
-		logger.info("saving new sermon series {}", transientSermonSeries);
+		logger.debug("saving new sermon series {}", transientSermonSeries);
 
-		PersistentSermonSeries persistentSermonSeries = new PersistentSermonSeries(transientSermonSeries);
-
-		persistentSermonSeries.setId("abcdefg");
-
-		return persistentSermonSeries;
+		return repo.save(transientSermonSeries);
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)

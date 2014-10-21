@@ -1,7 +1,9 @@
 package cc.newmercy.contentservices.web.api.v1.sermonseries;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.client.WebTarget;
@@ -9,9 +11,9 @@ import javax.ws.rs.client.WebTarget;
 import jersey.repackaged.com.google.common.base.Preconditions;
 import cc.newmercy.contentservices.neo4j.Neo4jRepository;
 import cc.newmercy.contentservices.neo4j.Neo4jTransaction;
+import cc.newmercy.contentservices.neo4j.Nodes;
+import cc.newmercy.contentservices.neo4j.json.Datum;
 import cc.newmercy.contentservices.neo4j.json.TransactionResponse;
-
-import com.google.common.collect.ImmutableMap;
 
 public class Neo4jSermonSeriesRepository extends Neo4jRepository implements SermonSeriesRepository {
 
@@ -22,6 +24,19 @@ public class Neo4jSermonSeriesRepository extends Neo4jRepository implements Serm
 	private static final String NAME_PROPERTY = "name";
 
 	private static final String ID_PROPERTY = "id";
+
+	private static Function<Datum, PersistentSermonSeries> MAP_SERMON_SERIES = (datum) -> {
+		@SuppressWarnings("unchecked")
+		Map<String, Object> propertMap = (Map<String, Object>) datum.getRow().get(0);
+
+		PersistentSermonSeries sermonSeries = new PersistentSermonSeries();
+		sermonSeries.setId((String) propertMap.get(ID_PROPERTY));
+		sermonSeries.setName((String) propertMap.get(NAME_PROPERTY));
+		sermonSeries.setDescription((String) propertMap.get(DESCRIPTION_PROPERTY));
+		sermonSeries.setImageUrl((String) propertMap.get(IMAGE_URL_PROPERTY));
+
+		return sermonSeries;
+	};
 
 	private static final String SERMON_SERIES_LABEL = "SermonSeries";
 
@@ -34,6 +49,13 @@ public class Neo4jSermonSeriesRepository extends Neo4jRepository implements Serm
 			SKIP_PARAM,
 			PAGE_SIZE_PARAM);
 
+	private static final String SAVE_QUERY = Nodes.createNodeQuery(
+			SERMON_SERIES_LABEL,
+			ID_PROPERTY,
+			NAME_PROPERTY,
+			DESCRIPTION_PROPERTY,
+			IMAGE_URL_PROPERTY);
+
 	public Neo4jSermonSeriesRepository(WebTarget neo4j, Neo4jTransaction neo4jTransaction) {
 		super(neo4j, neo4jTransaction);
 	}
@@ -43,24 +65,14 @@ public class Neo4jSermonSeriesRepository extends Neo4jRepository implements Serm
 		Preconditions.checkArgument(page > 0, "page must be positive");
 		Preconditions.checkArgument(pageSize > 0, "page size must be positive");
 
-		TransactionResponse response = post(LIST_QUERY, ImmutableMap.<String, Object> builder()
-				.put(SKIP_PARAM, (page - 1) * pageSize)
-				.put(PAGE_SIZE_PARAM, pageSize)
-				.build());
+		Map<String, Object> parameters = new HashMap<>(2, 1);
+		parameters.put(SKIP_PARAM, (page - 1) * pageSize);
+		parameters.put(PAGE_SIZE_PARAM, pageSize);
 
-		@SuppressWarnings("unchecked")
+		TransactionResponse response = post(LIST_QUERY, parameters);
+
 		List<PersistentSermonSeries> sermonSeriesList = response.getResults().get(0).getData().stream()
-				.map((datum) -> {
-					Map<String, Object> propertMap = (Map<String, Object>) datum.getRow().get(0);
-
-					PersistentSermonSeries sermonSeries = new PersistentSermonSeries();
-					sermonSeries.setId((String) propertMap.get(ID_PROPERTY));
-					sermonSeries.setName((String) propertMap.get(NAME_PROPERTY));
-					sermonSeries.setDescription((String) propertMap.get(DESCRIPTION_PROPERTY));
-					sermonSeries.setImageUrl((String) propertMap.get(IMAGE_URL_PROPERTY));
-
-					return sermonSeries;
-				})
+				.map(MAP_SERMON_SERIES)
 				.collect(Collectors.toList());
 
 		return sermonSeriesList;
@@ -68,6 +80,12 @@ public class Neo4jSermonSeriesRepository extends Neo4jRepository implements Serm
 
 	@Override
 	public PersistentSermonSeries save(TransientSermonSeries transientSeries) {
-		return null;
+		Map<String, Object> parameters = new HashMap<>(4, 1);
+		parameters.put(ID_PROPERTY, "test");
+		parameters.put(NAME_PROPERTY, transientSeries.getName());
+		parameters.put(DESCRIPTION_PROPERTY, transientSeries.getDescription());
+		parameters.put(IMAGE_URL_PROPERTY, transientSeries.getImageUrl());
+
+		return post(SAVE_QUERY, parameters, MAP_SERMON_SERIES);
 	}
 }
