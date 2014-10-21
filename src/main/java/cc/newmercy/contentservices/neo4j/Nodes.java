@@ -21,4 +21,20 @@ public final class Nodes {
 
 		return query.toString();
 	}
+
+	public static String updateNodeQuery(String label, String idProperty, String... properties) {
+		StringBuilder query = new StringBuilder();
+
+		try (Formatter formatter = new Formatter(query)) {
+			formatter.format("match (n:%s) where n.%s = { %2$s } set n.%s = { %3$s }", label, idProperty, properties[0]);
+
+			for (int i = 1; i < properties.length; i++) {
+				formatter.format(", n.%s = { %1$s }", properties[i]);
+			}
+		}
+
+		query.append(" return n");
+
+		return query.toString();
+	}
 }

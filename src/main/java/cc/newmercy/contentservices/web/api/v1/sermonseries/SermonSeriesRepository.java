@@ -6,4 +6,6 @@ public interface SermonSeriesRepository {
 	List<PersistentSermonSeries> list(int page, int pageSize);
 
 	PersistentSermonSeries save(TransientSermonSeries transientSeries);
+
+	PersistentSermonSeries update(String id, EditedSermonSeries editedSeries);
 }

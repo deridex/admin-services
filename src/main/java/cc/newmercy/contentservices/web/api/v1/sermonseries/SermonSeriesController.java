@@ -10,7 +10,6 @@ import javax.validation.Valid;
 import javax.validation.Validator;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import javax.ws.rs.PathParam;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,7 +70,8 @@ public class SermonSeriesController {
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public PersistentSermonSeries update(@PathParam("id") String id, @RequestBody PersistentSermonSeries mutatedSerios) {
-		return mutatedSerios;
+	@ResponseBody
+	public PersistentSermonSeries update(@PathVariable("id") String id, @RequestBody EditedSermonSeries editedSeries) {
+		return repo.update(id, editedSeries);
 	}
 }

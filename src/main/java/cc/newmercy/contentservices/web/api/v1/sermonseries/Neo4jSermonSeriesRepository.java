@@ -56,6 +56,13 @@ public class Neo4jSermonSeriesRepository extends Neo4jRepository implements Serm
 			DESCRIPTION_PROPERTY,
 			IMAGE_URL_PROPERTY);
 
+	private static final String UPDATE_QUERY = Nodes.updateNodeQuery(
+			SERMON_SERIES_LABEL,
+			ID_PROPERTY,
+			NAME_PROPERTY,
+			DESCRIPTION_PROPERTY,
+			IMAGE_URL_PROPERTY);
+
 	public Neo4jSermonSeriesRepository(WebTarget neo4j, Neo4jTransaction neo4jTransaction) {
 		super(neo4j, neo4jTransaction);
 	}
@@ -87,5 +94,16 @@ public class Neo4jSermonSeriesRepository extends Neo4jRepository implements Serm
 		parameters.put(IMAGE_URL_PROPERTY, transientSeries.getImageUrl());
 
 		return post(SAVE_QUERY, parameters, MAP_SERMON_SERIES);
+	}
+
+	@Override
+	public PersistentSermonSeries update(String id, EditedSermonSeries editedSeries) {
+		Map<String, Object> parameters = new HashMap<>(4, 1);
+		parameters.put(ID_PROPERTY, id);
+		parameters.put(NAME_PROPERTY, editedSeries.getName());
+		parameters.put(DESCRIPTION_PROPERTY, editedSeries.getDescription());
+		parameters.put(IMAGE_URL_PROPERTY, editedSeries.getImageUrl());
+
+		return post(UPDATE_QUERY, parameters, MAP_SERMON_SERIES);
 	}
 }
