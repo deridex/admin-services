@@ -1,0 +1,22 @@
+<section>
+	<table>
+		<thead>
+			<tr>
+				<th>Id</th>
+				<th>Name</th>
+				<th>Status</th>
+				<th>Created At</th>
+				<th>Sermons</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr data-ng-repeat="sermonSeries in sermonSeriesList">
+				<td><a href="#/sermon-series/{{ sermonSeries.id }}">{{ sermonSeries.id }}</a></td>
+				<td><a href="#/sermon-series/{{ sermonSeries.id }}">{{ sermonSeries.name }}</a></td>
+				<td><a href="#/sermon-series/{{ sermonSeries.id }}">Active</a></td>
+				<td><a href="#/sermon-series/{{ sermonSeries.id }}">2014-10-14T12:34:56Z</a></td>
+				<td><a href="#/sermon-series/{{ sermonSeries.id }}">3</a></td>
+			</tr>
+		</tbody>
+	</table>
+</section>

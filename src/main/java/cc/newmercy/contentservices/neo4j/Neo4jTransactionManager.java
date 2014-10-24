@@ -55,7 +55,7 @@ public class Neo4jTransactionManager extends AbstractPlatformTransactionManager 
 			logger.trace("committing {}", url.get());
 
 			try {
-				TransactionResponse response = client.target(url.get()).request()
+				TransactionResponse response = client.target(url.get()).path("commit").request()
 						.accept(MediaType.APPLICATION_JSON)
 						.post(null, TransactionResponse.class);
 

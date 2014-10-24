@@ -22,6 +22,16 @@ public final class Nodes {
 		return query.toString();
 	}
 
+	public static String getNodeQuery(String label, String idProperty) {
+		StringBuilder query = new StringBuilder();
+
+		try (Formatter formatter = new Formatter(query)) {
+			formatter.format("match (n:%s) where n.%s = { %2$s } return n", label, idProperty);
+		}
+
+		return query.toString();
+	}
+
 	public static String updateNodeQuery(String label, String idProperty, String... properties) {
 		StringBuilder query = new StringBuilder();
 

@@ -2,43 +2,15 @@
 <html lang="en" ng-app="contentApp">
 <head>
 <meta charset="utf-8">
-<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/restangular/1.4.0/restangular.min.js"></script>
+<script src="/js/vendor/angularjs-1.3.0/angular.js"></script>
+<script src="/js/vendor/angularjs-1.3.0/angular-route.js"></script>
+<script src="/js/vendor/lodash-2.4.1/lodash.min.js"></script>
+<script src="/js/vendor/restangular-1.4.0/restangular.min.js"></script>
 <script src="/app/app-services.js"></script>
 <script src="/app/app-controllers.js"></script>
 <script src="/app/app.js"></script>
 </head>
 <body>
-<nav>
-	<ul>
-		<li>List</li>
-		<li>Add</li>
-	</ul>
-</nav>
-<section data-ng-controller="sermonSeriesListCtrl">
-	<div data-ng-repeat="sermonSeries in sermonSeriesList">
-		<div>{{sermonSeries.id}}</div>
-		<div>{{sermonSeries.name}}</div>
-		<div>{{sermonSeries.description}}</div>
-	</div>
-</section>
-<section data-ng-controller="sermonSeriesAddCtrl">
-	<form name="sermonSeriesForm" novalidate>
-		<div>
-			<label>Name</label>
-			<input name="name" type="text" placeholder="Sermon Series Title" data-ng-model="name">
-		</div>
-		<div>
-			<label>Description</label>
-			<textarea name="description" placeholder="Sermon Series Description" data-ng-model="description"></textarea>
-		</div>
-		<button type="submit" data-ng-click="save()">Add</button>
-	</form>
-	<div>
-		<div>{{name}}</div>
-		<div>{{description}}</div>
-	</div>
-</section>
+<div data-ng-view></div>
 </body>
 </html>

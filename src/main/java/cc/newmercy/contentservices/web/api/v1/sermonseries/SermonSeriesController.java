@@ -62,9 +62,7 @@ public class SermonSeriesController {
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	@ResponseBody
 	public PersistentSermonSeries get(@PathVariable("id") String id) {
-		PersistentSermonSeries series = new PersistentSermonSeries();
-
-		series.setName("GET");
+		PersistentSermonSeries series = repo.get(id);
 
 		return series;
 	}

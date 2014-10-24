@@ -1,6 +1,7 @@
 package cc.newmercy.contentservices.neo4j;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
@@ -8,6 +9,9 @@ import java.util.function.Function;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.Response.StatusType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +21,7 @@ import cc.newmercy.contentservices.neo4j.json.Statement;
 import cc.newmercy.contentservices.neo4j.json.TransactionRequest;
 import cc.newmercy.contentservices.neo4j.json.TransactionResponse;
 import cc.newmercy.contentservices.repository.RepositoryException;
+import cc.newmercy.contentservices.web.api.exceptions.NotFoundException;
 
 public class Neo4jRepository {
 
@@ -41,22 +46,34 @@ public class Neo4jRepository {
 
 		logger.debug("executing query '{}' with parameters {}", cyperQuery, parameters);
 
-		TransactionResponse response = neo4j.request(MediaType.APPLICATION_JSON_TYPE).post(Entity.json(request), TransactionResponse.class);
+		Response response = neo4j.request(MediaType.APPLICATION_JSON_TYPE).post(Entity.json(request));
 
-		if (response.getCommit() != null) {
-			neo4jTransaction.setTransactionUrl(response.getCommit());
+		if (response.getStatus() != Status.CREATED.getStatusCode()) {
+			StatusType statusInfo = response.getStatusInfo();
+
+			throw new RepositoryException(statusInfo.getStatusCode() + " " + statusInfo.getReasonPhrase());
 		}
 
-		if (!response.getErrors().isEmpty()) {
-			throw new RepositoryException(response.getErrors().toString());
+		neo4jTransaction.setTransactionUrl(response.getHeaderString("Location"));
+
+		TransactionResponse txnResponse = response.readEntity(TransactionResponse.class);
+
+		if (!txnResponse.getErrors().isEmpty()) {
+			throw new RepositoryException(txnResponse.getErrors().toString());
 		}
 
-		return response;
+		return txnResponse;
 	}
 
 	protected final <T> T post(String cyperQuery, Map<String, Object> parameters, Function<Datum, T> mapper) {
 		TransactionResponse response = post(cyperQuery, parameters);
 
-		return mapper.apply(response.getResults().get(0).getData().get(0));
+		List<Datum> data = response.getResults().get(0).getData();
+
+		if (data.isEmpty()) {
+			throw new NotFoundException();
+		}
+
+		return mapper.apply(data.get(0));
 	}
 }

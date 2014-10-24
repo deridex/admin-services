@@ -1,5 +1,6 @@
 package cc.newmercy.contentservices.web.api.v1.sermonseries;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,13 +28,13 @@ public class Neo4jSermonSeriesRepository extends Neo4jRepository implements Serm
 
 	private static Function<Datum, PersistentSermonSeries> MAP_SERMON_SERIES = (datum) -> {
 		@SuppressWarnings("unchecked")
-		Map<String, Object> propertMap = (Map<String, Object>) datum.getRow().get(0);
+		Map<String, Object> propertyMap = (Map<String, Object>) datum.getRow().get(0);
 
 		PersistentSermonSeries sermonSeries = new PersistentSermonSeries();
-		sermonSeries.setId((String) propertMap.get(ID_PROPERTY));
-		sermonSeries.setName((String) propertMap.get(NAME_PROPERTY));
-		sermonSeries.setDescription((String) propertMap.get(DESCRIPTION_PROPERTY));
-		sermonSeries.setImageUrl((String) propertMap.get(IMAGE_URL_PROPERTY));
+		sermonSeries.setId((String) propertyMap.get(ID_PROPERTY));
+		sermonSeries.setName((String) propertyMap.get(NAME_PROPERTY));
+		sermonSeries.setDescription((String) propertyMap.get(DESCRIPTION_PROPERTY));
+		sermonSeries.setImageUrl((String) propertyMap.get(IMAGE_URL_PROPERTY));
 
 		return sermonSeries;
 	};
@@ -55,6 +56,8 @@ public class Neo4jSermonSeriesRepository extends Neo4jRepository implements Serm
 			NAME_PROPERTY,
 			DESCRIPTION_PROPERTY,
 			IMAGE_URL_PROPERTY);
+
+	private static final String GET_QUERY = Nodes.getNodeQuery(SERMON_SERIES_LABEL, ID_PROPERTY);
 
 	private static final String UPDATE_QUERY = Nodes.updateNodeQuery(
 			SERMON_SERIES_LABEL,
@@ -94,6 +97,13 @@ public class Neo4jSermonSeriesRepository extends Neo4jRepository implements Serm
 		parameters.put(IMAGE_URL_PROPERTY, transientSeries.getImageUrl());
 
 		return post(SAVE_QUERY, parameters, MAP_SERMON_SERIES);
+	}
+
+	@Override
+	public PersistentSermonSeries get(String id) {
+		Map<String, Object> parameters = Collections.singletonMap(ID_PROPERTY, id);
+
+		return post(GET_QUERY, parameters, MAP_SERMON_SERIES);
 	}
 
 	@Override

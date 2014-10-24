@@ -7,5 +7,7 @@ public interface SermonSeriesRepository {
 
 	PersistentSermonSeries save(TransientSermonSeries transientSeries);
 
+	PersistentSermonSeries get(String id);
+
 	PersistentSermonSeries update(String id, EditedSermonSeries editedSeries);
 }
