@@ -1,0 +1,23 @@
+<section>
+<form name="add-sermon-series" novalidate>
+<div>
+	<label>Name</label>
+	<input name="name"
+			type="text"
+			placeholder="Sermon Series Name"
+			data-ng-model="name"
+			required>
+</div>
+<div>
+	<label>Description</label><textarea name="description" required data-ng-model="description"></textarea>
+</div>
+<div>
+	<label>Image Url</label>
+	<input name="imageUrl" type="url" required data-ng-model="imageUrl">
+</div>
+<div>
+</div>
+</form>
+<div>Cancel</div>
+<div data-ng-click="onSave($event)">Save</div>
+</section>
