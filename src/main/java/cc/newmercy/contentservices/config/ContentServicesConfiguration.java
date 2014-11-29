@@ -3,6 +3,8 @@ package cc.newmercy.contentservices.config;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
 
+import cc.newmercy.contentservices.web.id.IdService;
+import cc.newmercy.contentservices.web.id.Neo4jIdService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -59,6 +61,11 @@ public class ContentServicesConfiguration {
 
 	@Bean
 	public SermonSeriesRepository sermonSeriesRepository() {
-		return new Neo4jSermonSeriesRepository(neo4j(), neo4jTransaction());
+		return new Neo4jSermonSeriesRepository(idService(), neo4j(), neo4jTransaction());
+	}
+
+	@Bean
+	public IdService idService() {
+		return new Neo4jIdService(neo4j());
 	}
 }

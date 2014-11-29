@@ -36,15 +36,15 @@ public class Neo4jRepository {
 		this.neo4jTransaction = Objects.requireNonNull(neo4jTransaction, "neo4j transaction");
 	}
 
-	protected final TransactionResponse post(String cyperQuery, Map<String, Object> parameters) {
+	protected final TransactionResponse post(String cypherQuery, Map<String, Object> parameters) {
 		Statement statement = new Statement();
-		statement.setStatement(cyperQuery);
+		statement.setStatement(cypherQuery);
 		statement.setParameters(parameters);
 
 		TransactionRequest request = new TransactionRequest();
 		request.setStatements(Arrays.asList(statement));
 
-		logger.debug("executing query '{}' with parameters {}", cyperQuery, parameters);
+		logger.debug("executing query '{}' with parameters {}", cypherQuery, parameters);
 
 		Response response = neo4j.request(MediaType.APPLICATION_JSON_TYPE).post(Entity.json(request));
 
@@ -65,8 +65,8 @@ public class Neo4jRepository {
 		return txnResponse;
 	}
 
-	protected final <T> T post(String cyperQuery, Map<String, Object> parameters, Function<Datum, T> mapper) {
-		TransactionResponse response = post(cyperQuery, parameters);
+	protected final <T> T post(String cypherQuery, Map<String, Object> parameters, Function<Datum, T> mapper) {
+		TransactionResponse response = post(cypherQuery, parameters);
 
 		List<Datum> data = response.getResults().get(0).getData();
 

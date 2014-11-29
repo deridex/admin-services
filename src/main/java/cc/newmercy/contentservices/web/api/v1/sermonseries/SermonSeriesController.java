@@ -41,7 +41,7 @@ public class SermonSeriesController {
 	@ResponseBody
 	public List<PersistentSermonSeries> list(
 			@RequestParam(defaultValue = "1") @Min(1) int page,
-			@RequestParam(defaultValue = "10") @Valid @Min(1) @Max(100) int pageSize) {
+			@RequestParam(defaultValue = "20") @Valid @Min(1) @Max(100) int pageSize) {
 		return repo.list(page, pageSize);
 	}
 

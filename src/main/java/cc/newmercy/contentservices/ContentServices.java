@@ -24,6 +24,9 @@ public class ContentServices {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContentServices.class);
 
 	public static void main(String[] args) throws Exception {
+		// http://docs.aws.amazon.com/AWSSdkDocsJava/latest/DeveloperGuide/java-dg-jvm-ttl.html
+		java.security.Security.setProperty("networkaddress.cache.ttl" , "60");
+
 		int port = 8080;
 
 		try (AnnotationConfigWebApplicationContext rootInjector = new AnnotationConfigWebApplicationContext()) {
@@ -75,17 +78,17 @@ public class ContentServices {
 	}
 
 	private static ContextHandler newServletHandler(AnnotationConfigWebApplicationContext rootInjector) {
-    ServletContextHandler servletHandler = new ServletContextHandler(ServletContextHandler.SESSIONS | ServletContextHandler.SECURITY);
+		ServletContextHandler servletHandler = new ServletContextHandler(ServletContextHandler.SESSIONS | ServletContextHandler.SECURITY);
 
-    AnnotationConfigWebApplicationContext webInjector = new AnnotationConfigWebApplicationContext();
-    webInjector.register(WebConfiguration.class);
-    webInjector.setParent(rootInjector);
+		AnnotationConfigWebApplicationContext webInjector = new AnnotationConfigWebApplicationContext();
+		webInjector.register(WebConfiguration.class);
+		webInjector.setParent(rootInjector);
 
-    ServletHolder servletHolder = new ServletHolder(new DispatcherServlet(webInjector));
+		ServletHolder servletHolder = new ServletHolder(new DispatcherServlet(webInjector));
 
-    servletHandler.addServlet(servletHolder, "/");
+		servletHandler.addServlet(servletHolder, "/");
 
-    return servletHandler;
+		return servletHandler;
 	}
 
 	private static ContextHandler newClasspathResourceHandler(String topLevelDir) {

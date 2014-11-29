@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <contextName>content-services</contextName>
-    
+
     <jmxConfigurator/>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
@@ -11,14 +11,16 @@
     </appender>
 
 		<logger name="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping" level="info" />
-		
+
     <logger name="cc.newmercy.contentservices" level="info" />
-    
+
     <!-- Set this to trace if you suspect json typos are preventing your controllers from getting invoked. -->
     <logger name="org.springframework.web.method.HandlerMethod" level="warn" />
-    
+
     <!-- Set this to trace to print transaction management state. -->
     <logger name="org.springframework.transaction.interceptor.TransactionInterceptor" level="warn" />
+
+    <logger name="org.eclipse.jetty.server.ServerConnector" level="INFO" />
 
     <root level="warn">
         <appender-ref ref="STDOUT"/>

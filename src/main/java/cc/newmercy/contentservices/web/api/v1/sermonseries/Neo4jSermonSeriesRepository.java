@@ -1,5 +1,14 @@
 package cc.newmercy.contentservices.web.api.v1.sermonseries;
 
+import cc.newmercy.contentservices.neo4j.Neo4jRepository;
+import cc.newmercy.contentservices.neo4j.Neo4jTransaction;
+import cc.newmercy.contentservices.neo4j.Nodes;
+import cc.newmercy.contentservices.neo4j.json.Datum;
+import cc.newmercy.contentservices.neo4j.json.TransactionResponse;
+import cc.newmercy.contentservices.web.id.IdService;
+import com.google.common.base.Preconditions;
+
+import javax.ws.rs.client.WebTarget;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -7,16 +16,9 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import javax.ws.rs.client.WebTarget;
-
-import jersey.repackaged.com.google.common.base.Preconditions;
-import cc.newmercy.contentservices.neo4j.Neo4jRepository;
-import cc.newmercy.contentservices.neo4j.Neo4jTransaction;
-import cc.newmercy.contentservices.neo4j.Nodes;
-import cc.newmercy.contentservices.neo4j.json.Datum;
-import cc.newmercy.contentservices.neo4j.json.TransactionResponse;
-
 public class Neo4jSermonSeriesRepository extends Neo4jRepository implements SermonSeriesRepository {
+
+	private static final String ID_SERIES_NAME = "sermon-series";
 
 	private static final String IMAGE_URL_PROPERTY = "imageUrl";
 
@@ -66,8 +68,12 @@ public class Neo4jSermonSeriesRepository extends Neo4jRepository implements Serm
 			DESCRIPTION_PROPERTY,
 			IMAGE_URL_PROPERTY);
 
-	public Neo4jSermonSeriesRepository(WebTarget neo4j, Neo4jTransaction neo4jTransaction) {
+	private final IdService idService;
+
+	public Neo4jSermonSeriesRepository(IdService idService, WebTarget neo4j, Neo4jTransaction neo4jTransaction) {
 		super(neo4j, neo4jTransaction);
+
+		this.idService = Preconditions.checkNotNull(idService, "id service");
 	}
 
 	@Override
@@ -91,7 +97,7 @@ public class Neo4jSermonSeriesRepository extends Neo4jRepository implements Serm
 	@Override
 	public PersistentSermonSeries save(TransientSermonSeries transientSeries) {
 		Map<String, Object> parameters = new HashMap<>(4, 1);
-		parameters.put(ID_PROPERTY, "test");
+		parameters.put(ID_PROPERTY, idService.next(ID_SERIES_NAME));
 		parameters.put(NAME_PROPERTY, transientSeries.getName());
 		parameters.put(DESCRIPTION_PROPERTY, transientSeries.getDescription());
 		parameters.put(IMAGE_URL_PROPERTY, transientSeries.getImageUrl());

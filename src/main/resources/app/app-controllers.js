@@ -20,14 +20,14 @@ angular.module('contentControllers', ['ngRoute', 'contentServices'])
 		}])
 		.controller('SermonSeriesAddCtrl', ['$scope', 'contentApi', '$location', '$log', function($scope, contentApi, $location, $log) {
 			$scope.onSave = function() {
-				var transientSermonSeries = { name: $scope.name, description: $scope.description };
-				
+				var transientSermonSeries = { name: $scope.name, description: $scope.description, imageUrl: $scope.imageUrl };
+
 				$log.info('adding sermon series ' + JSON.stringify(transientSermonSeries));
-				
+
 				contentApi.all('sermon-series').customPOST(transientSermonSeries).then(
 						function(persistentSermonSeries) {
 							$log.info('added sermon series ' + persistentSermonSeries.id);
-							
+
 							$location.path('/');
 						},
 						function(reason) {

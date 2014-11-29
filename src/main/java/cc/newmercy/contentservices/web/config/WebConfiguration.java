@@ -2,6 +2,7 @@ package cc.newmercy.contentservices.web.config;
 
 import java.util.Arrays;
 
+import cc.newmercy.contentservices.web.api.v1.sermon.SermonController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +12,10 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.support.WebBindingInitializer;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.commons.CommonsFileUploadSupport;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 
@@ -61,6 +66,20 @@ public class WebConfiguration implements WebBindingInitializer {
 	@Bean
 	public AdminController adminController() {
 		return new AdminController(serverStopper);
+	}
+
+	@Bean
+	public SermonController sermonController() {
+		return new SermonController();
+	}
+
+	@Bean
+	public MultipartResolver multipartResolver() {
+		CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
+
+		multipartResolver.setMaxUploadSize(1024 * 1024 * 1024 * 2);
+
+		return multipartResolver;
 	}
 
 	@Override
