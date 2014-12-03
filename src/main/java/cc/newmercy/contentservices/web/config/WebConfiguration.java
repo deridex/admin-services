@@ -1,8 +1,12 @@
 package cc.newmercy.contentservices.web.config;
 
-import java.util.Arrays;
-
+import cc.newmercy.contentservices.ServerStopper;
+import cc.newmercy.contentservices.neo4j.Neo4jTransaction;
+import cc.newmercy.contentservices.web.api.v1.admin.AdminController;
 import cc.newmercy.contentservices.web.api.v1.sermon.SermonController;
+import cc.newmercy.contentservices.web.api.v1.sermonseries.SermonSeriesController;
+import cc.newmercy.contentservices.web.api.v1.sermonseries.SermonSeriesRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,19 +17,11 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.support.WebBindingInitializer;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartResolver;
-import org.springframework.web.multipart.commons.CommonsFileUploadSupport;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 
-import cc.newmercy.contentservices.ServerStopper;
-import cc.newmercy.contentservices.neo4j.Neo4jTransaction;
-import cc.newmercy.contentservices.web.api.v1.admin.AdminController;
-import cc.newmercy.contentservices.web.api.v1.sermonseries.SermonSeriesController;
-import cc.newmercy.contentservices.web.api.v1.sermonseries.SermonSeriesRepository;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Arrays;
 
 @Configuration
 @EnableAspectJAutoProxy
@@ -50,8 +46,7 @@ public class WebConfiguration implements WebBindingInitializer {
 	public Object requestMappingHandlerAdapter() {
 		RequestMappingHandlerAdapter adapter = new RequestMappingHandlerAdapter();
 
-		MappingJackson2HttpMessageConverter jacksonConverter = new MappingJackson2HttpMessageConverter();
-		jacksonConverter.setObjectMapper(jsonMapper);
+		MappingJackson2HttpMessageConverter jacksonConverter = new MappingJackson2HttpMessageConverter(jsonMapper);
 
 		adapter.setMessageConverters(Arrays.asList(jacksonConverter));
 

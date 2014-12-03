@@ -1,0 +1,30 @@
+{
+    "name": "outer container name",
+    "innerContainer": {
+        "columnsList": [
+            [
+                {
+                    "one point two": 1.2,
+                    "two point three": 2.3
+                },
+                "string 1",
+                {
+                    "name": "pojo name 1",
+                    "age": 123
+                }
+            ],
+            [
+                {
+                    "three point four": 3.4,
+                    "five point six": 5.6
+                },
+                "string 2",
+                {
+                    "name": "pojo name 2",
+                    "age": 456
+                }
+            ]
+        ],
+        "name": "inner container name"
+    }
+}

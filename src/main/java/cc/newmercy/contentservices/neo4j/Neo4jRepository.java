@@ -1,79 +1,90 @@
 package cc.newmercy.contentservices.neo4j;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Function;
-
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.Response.StatusType;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import cc.newmercy.contentservices.neo4j.json.Datum;
+import cc.newmercy.contentservices.neo4j.json.Result;
 import cc.newmercy.contentservices.neo4j.json.Statement;
 import cc.newmercy.contentservices.neo4j.json.TransactionRequest;
 import cc.newmercy.contentservices.neo4j.json.TransactionResponse;
 import cc.newmercy.contentservices.repository.RepositoryException;
-import cc.newmercy.contentservices.web.api.exceptions.NotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.Response.StatusType;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class Neo4jRepository {
 
-	private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
-	private WebTarget neo4j;
+    private WebTarget neo4j;
 
-	private Neo4jTransaction neo4jTransaction;
+    private Neo4jTransaction neo4jTransaction;
 
-	protected Neo4jRepository(WebTarget neo4j, Neo4jTransaction neo4jTransaction) {
-		this.neo4j = Objects.requireNonNull(neo4j, "neo4j web target");
-		this.neo4jTransaction = Objects.requireNonNull(neo4jTransaction, "neo4j transaction");
-	}
+    protected Neo4jRepository(WebTarget neo4j, Neo4jTransaction neo4jTransaction) {
+        this.neo4j = Objects.requireNonNull(neo4j, "neo4j web target");
+        this.neo4jTransaction = Objects.requireNonNull(neo4jTransaction, "neo4j transaction");
+    }
 
-	protected final TransactionResponse post(String cypherQuery, Map<String, Object> parameters) {
-		Statement statement = new Statement();
-		statement.setStatement(cypherQuery);
-		statement.setParameters(parameters);
+    protected final <COLUMNS> TransactionResponse<COLUMNS> post(
+            String cypherQuery,
+            Map<String, Object> parameters,
+            GenericType<TransactionResponse<COLUMNS>> type) {
+        Statement statement = new Statement();
+        statement.setStatement(cypherQuery);
+        statement.setParameters(parameters);
 
-		TransactionRequest request = new TransactionRequest();
-		request.setStatements(Arrays.asList(statement));
+        TransactionRequest request = new TransactionRequest();
+        request.setStatements(Arrays.asList(statement));
 
-		logger.debug("executing query '{}' with parameters {}", cypherQuery, parameters);
+        logger.debug("executing query '{}' with parameters {}", cypherQuery, parameters);
 
-		Response response = neo4j.request(MediaType.APPLICATION_JSON_TYPE).post(Entity.json(request));
+        Response response = neo4j.request(MediaType.APPLICATION_JSON_TYPE).post(Entity.json(request));
 
-		if (response.getStatus() != Status.CREATED.getStatusCode()) {
-			StatusType statusInfo = response.getStatusInfo();
+        if (response.getStatus() != Status.CREATED.getStatusCode()) {
+            StatusType statusInfo = response.getStatusInfo();
 
-			throw new RepositoryException(statusInfo.getStatusCode() + " " + statusInfo.getReasonPhrase());
-		}
+            throw new RepositoryException(statusInfo.getStatusCode() + " " + statusInfo.getReasonPhrase());
+        }
 
-		neo4jTransaction.setTransactionUrl(response.getHeaderString("Location"));
+        neo4jTransaction.setTransactionUrl(response.getHeaderString("Location"));
 
-		TransactionResponse txnResponse = response.readEntity(TransactionResponse.class);
+        TransactionResponse<COLUMNS> txnResponse = response.readEntity(type);
 
-		if (!txnResponse.getErrors().isEmpty()) {
-			throw new RepositoryException(txnResponse.getErrors().toString());
-		}
+        if (!txnResponse.getErrors().isEmpty()) {
+            throw new RepositoryException(txnResponse.getErrors().toString());
+        }
 
-		return txnResponse;
-	}
+        return txnResponse;
+    }
 
-	protected final <T> T post(String cypherQuery, Map<String, Object> parameters, Function<Datum, T> mapper) {
-		TransactionResponse response = post(cypherQuery, parameters);
+    protected final <COLUMNS> COLUMNS postForOne(
+            String cypherQuery,
+            Map<String, Object> parameters,
+            GenericType<TransactionResponse<COLUMNS>> type) {
+        TransactionResponse<COLUMNS> response = post(cypherQuery, parameters, type);
 
-		List<Datum> data = response.getResults().get(0).getData();
+        List<Result<COLUMNS>> results = response.getResults();
 
-		if (data.isEmpty()) {
-			throw new NotFoundException();
-		}
+        if (results.size() != 1) {
+            throw new IllegalArgumentException("expected 1 result but got " + results.size());
+        }
 
-		return mapper.apply(data.get(0));
-	}
+        List<COLUMNS> data = results.get(0).getData();
+
+        if (data.size() != 1) {
+            throw new IllegalArgumentException("expected 1 row but got " + data.size());
+        }
+
+        COLUMNS columns = data.get(0);
+
+        return columns;
+    }
 }

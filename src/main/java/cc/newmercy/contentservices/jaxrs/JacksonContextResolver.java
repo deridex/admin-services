@@ -1,10 +1,9 @@
 package cc.newmercy.contentservices.jaxrs;
 
-import java.util.Objects;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.ws.rs.ext.ContextResolver;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Objects;
 
 public class JacksonContextResolver implements ContextResolver<ObjectMapper> {
 
@@ -16,10 +15,6 @@ public class JacksonContextResolver implements ContextResolver<ObjectMapper> {
 
 	@Override
 	public ObjectMapper getContext(Class<?> type) {
-		if (type == ObjectMapper.class) {
-			return jsonMapper;
-		}
-
-		return null;
+		return jsonMapper;
 	}
 }

@@ -4,46 +4,51 @@ import java.util.Objects;
 
 public class PersistentSermonSeries extends SermonSeriesCommonFields {
 
-	private String id;
+    private String id;
 
-	public PersistentSermonSeries() {
-	}
+    private int version;
 
-	public PersistentSermonSeries(TransientSermonSeries series) {
-		super(series);
-	}
+    public PersistentSermonSeries() { }
 
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(getName(), getDescription(), getImageUrl(), id);
-	}
+    public int getVersion() {
+        return version;
+    }
 
-	@Override
-	public boolean equals(Object o) {
-		if (!(o instanceof PersistentSermonSeries)) {
-			return false;
-		}
+    public void setVersion(int version) {
+        this.version = version;
+    }
 
-		if (this == o) {
-			return true;
-		}
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 
-		PersistentSermonSeries other = (PersistentSermonSeries) o;
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof PersistentSermonSeries)) {
+            return false;
+        }
 
-		return Objects.equals(id, other.id);
-	}
+        if (this == o) {
+            return true;
+        }
 
-	@Override
-	public String toString() {
-		return "PersistentSermonSeries [id=" + id + ", name=" + getName() + ", description=" + getDescription()
-				+ ", imageUrl=" + getImageUrl() + "]";
-	}
+        PersistentSermonSeries other = (PersistentSermonSeries) o;
+
+        return Objects.equals(id, other.id);
+    }
+
+    @Override
+    public String toString() {
+        return "PersistentSermonSeries [id=" + id + ", version=" + version + ", name=" + getName() + ", description="
+                + getDescription() + ", imageUrl=" + getImageUrl() + "]";
+    }
 }

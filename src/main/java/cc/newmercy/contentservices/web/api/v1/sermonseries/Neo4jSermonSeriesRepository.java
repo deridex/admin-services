@@ -3,123 +3,111 @@ package cc.newmercy.contentservices.web.api.v1.sermonseries;
 import cc.newmercy.contentservices.neo4j.Neo4jRepository;
 import cc.newmercy.contentservices.neo4j.Neo4jTransaction;
 import cc.newmercy.contentservices.neo4j.Nodes;
-import cc.newmercy.contentservices.neo4j.json.Datum;
 import cc.newmercy.contentservices.neo4j.json.TransactionResponse;
 import cc.newmercy.contentservices.web.id.IdService;
 import com.google.common.base.Preconditions;
 
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class Neo4jSermonSeriesRepository extends Neo4jRepository implements SermonSeriesRepository {
 
-	private static final String ID_SERIES_NAME = "sermon-series";
+    private static final GenericType<TransactionResponse<PersistentSermonSeriesColumns>> COLUMNS = new GenericType<TransactionResponse<PersistentSermonSeriesColumns>>() { };
 
-	private static final String IMAGE_URL_PROPERTY = "imageUrl";
+    private static final String ID_SERIES_NAME = "sermon-series";
 
-	private static final String DESCRIPTION_PROPERTY = "description";
+    private static final String IMAGE_URL_PROPERTY = "imageUrl";
 
-	private static final String NAME_PROPERTY = "name";
+    private static final String DESCRIPTION_PROPERTY = "description";
 
-	private static final String ID_PROPERTY = "id";
+    private static final String NAME_PROPERTY = "name";
 
-	private static Function<Datum, PersistentSermonSeries> MAP_SERMON_SERIES = (datum) -> {
-		@SuppressWarnings("unchecked")
-		Map<String, Object> propertyMap = (Map<String, Object>) datum.getRow().get(0);
+    private static final String ID_PROPERTY = "id";
 
-		PersistentSermonSeries sermonSeries = new PersistentSermonSeries();
-		sermonSeries.setId((String) propertyMap.get(ID_PROPERTY));
-		sermonSeries.setName((String) propertyMap.get(NAME_PROPERTY));
-		sermonSeries.setDescription((String) propertyMap.get(DESCRIPTION_PROPERTY));
-		sermonSeries.setImageUrl((String) propertyMap.get(IMAGE_URL_PROPERTY));
+    private static final String SERMON_SERIES_LABEL = "SermonSeries";
 
-		return sermonSeries;
-	};
+    private static final String SKIP_PARAM = "skip";
 
-	private static final String SERMON_SERIES_LABEL = "SermonSeries";
+    private static final String PAGE_SIZE_PARAM = "pageSize";
 
-	private static final String SKIP_PARAM = "skip";
+    private static final String LIST_QUERY = String.format("match (n:%s) return n order by n.created_at skip { %s } limit { %s }",
+            SERMON_SERIES_LABEL,
+            SKIP_PARAM,
+            PAGE_SIZE_PARAM);
 
-	private static final String PAGE_SIZE_PARAM = "pageSize";
+    private static final String SAVE_QUERY = Nodes.createNodeQuery(
+            SERMON_SERIES_LABEL,
+            ID_PROPERTY,
+            NAME_PROPERTY,
+            DESCRIPTION_PROPERTY,
+            IMAGE_URL_PROPERTY);
 
-	private static final String LIST_QUERY = String.format("match (n:%s) return n order by n.created_at skip { %s } limit { %s }",
-			SERMON_SERIES_LABEL,
-			SKIP_PARAM,
-			PAGE_SIZE_PARAM);
+    private static final String GET_QUERY = Nodes.getNodeQuery(SERMON_SERIES_LABEL, ID_PROPERTY);
 
-	private static final String SAVE_QUERY = Nodes.createNodeQuery(
-			SERMON_SERIES_LABEL,
-			ID_PROPERTY,
-			NAME_PROPERTY,
-			DESCRIPTION_PROPERTY,
-			IMAGE_URL_PROPERTY);
+    private static final String UPDATE_QUERY = Nodes.updateNodeQuery(
+            SERMON_SERIES_LABEL,
+            ID_PROPERTY,
+            NAME_PROPERTY,
+            DESCRIPTION_PROPERTY,
+            IMAGE_URL_PROPERTY);
 
-	private static final String GET_QUERY = Nodes.getNodeQuery(SERMON_SERIES_LABEL, ID_PROPERTY);
+    private final IdService idService;
 
-	private static final String UPDATE_QUERY = Nodes.updateNodeQuery(
-			SERMON_SERIES_LABEL,
-			ID_PROPERTY,
-			NAME_PROPERTY,
-			DESCRIPTION_PROPERTY,
-			IMAGE_URL_PROPERTY);
+    public Neo4jSermonSeriesRepository(IdService idService, WebTarget neo4j, Neo4jTransaction neo4jTransaction) {
+        super(neo4j, neo4jTransaction);
 
-	private final IdService idService;
+        this.idService = Preconditions.checkNotNull(idService, "id service");
+    }
 
-	public Neo4jSermonSeriesRepository(IdService idService, WebTarget neo4j, Neo4jTransaction neo4jTransaction) {
-		super(neo4j, neo4jTransaction);
+    @Override
+    public List<PersistentSermonSeries> list(int page, int pageSize) {
+        Preconditions.checkArgument(page > 0, "page must be positive");
+        Preconditions.checkArgument(pageSize > 0, "page size must be positive");
 
-		this.idService = Preconditions.checkNotNull(idService, "id service");
-	}
+        Map<String, Object> parameters = new HashMap<>(2, 1);
+        parameters.put(SKIP_PARAM, (page - 1) * pageSize);
+        parameters.put(PAGE_SIZE_PARAM, pageSize);
 
-	@Override
-	public List<PersistentSermonSeries> list(int page, int pageSize) {
-		Preconditions.checkArgument(page > 0, "page must be positive");
-		Preconditions.checkArgument(pageSize > 0, "page size must be positive");
+        TransactionResponse<PersistentSermonSeriesColumns> response = post(LIST_QUERY, parameters, COLUMNS);
 
-		Map<String, Object> parameters = new HashMap<>(2, 1);
-		parameters.put(SKIP_PARAM, (page - 1) * pageSize);
-		parameters.put(PAGE_SIZE_PARAM, pageSize);
+        List<PersistentSermonSeries> sermonSeriesList = response.getResults().get(0).getData().stream()
+                .map(columns -> columns.<PersistentSermonSeries> get(0))
+                .collect(Collectors.toList());
 
-		TransactionResponse response = post(LIST_QUERY, parameters);
+        return sermonSeriesList;
+    }
 
-		List<PersistentSermonSeries> sermonSeriesList = response.getResults().get(0).getData().stream()
-				.map(MAP_SERMON_SERIES)
-				.collect(Collectors.toList());
+    @Override
+    public PersistentSermonSeries save(TransientSermonSeries transientSeries) {
+        Map<String, Object> parameters = new HashMap<>(4, 1);
+        parameters.put(ID_PROPERTY, idService.next(ID_SERIES_NAME));
+        parameters.put(NAME_PROPERTY, transientSeries.getName());
+        parameters.put(DESCRIPTION_PROPERTY, transientSeries.getDescription());
+        parameters.put(IMAGE_URL_PROPERTY, transientSeries.getImageUrl());
 
-		return sermonSeriesList;
-	}
+        return postForOne(SAVE_QUERY, parameters, COLUMNS).get(0);
+    }
 
-	@Override
-	public PersistentSermonSeries save(TransientSermonSeries transientSeries) {
-		Map<String, Object> parameters = new HashMap<>(4, 1);
-		parameters.put(ID_PROPERTY, idService.next(ID_SERIES_NAME));
-		parameters.put(NAME_PROPERTY, transientSeries.getName());
-		parameters.put(DESCRIPTION_PROPERTY, transientSeries.getDescription());
-		parameters.put(IMAGE_URL_PROPERTY, transientSeries.getImageUrl());
+    @Override
+    public PersistentSermonSeries get(String id) {
+        Map<String, Object> parameters = Collections.singletonMap(ID_PROPERTY, id);
 
-		return post(SAVE_QUERY, parameters, MAP_SERMON_SERIES);
-	}
+        return postForOne(GET_QUERY, parameters, COLUMNS).get(0);
+    }
 
-	@Override
-	public PersistentSermonSeries get(String id) {
-		Map<String, Object> parameters = Collections.singletonMap(ID_PROPERTY, id);
+    @Override
+    public PersistentSermonSeries update(String id, EditedSermonSeries editedSeries) {
+        Map<String, Object> parameters = new HashMap<>(4, 1);
+        parameters.put(ID_PROPERTY, id);
+        parameters.put(NAME_PROPERTY, editedSeries.getName());
+        parameters.put(DESCRIPTION_PROPERTY, editedSeries.getDescription());
+        parameters.put(IMAGE_URL_PROPERTY, editedSeries.getImageUrl());
 
-		return post(GET_QUERY, parameters, MAP_SERMON_SERIES);
-	}
-
-	@Override
-	public PersistentSermonSeries update(String id, EditedSermonSeries editedSeries) {
-		Map<String, Object> parameters = new HashMap<>(4, 1);
-		parameters.put(ID_PROPERTY, id);
-		parameters.put(NAME_PROPERTY, editedSeries.getName());
-		parameters.put(DESCRIPTION_PROPERTY, editedSeries.getDescription());
-		parameters.put(IMAGE_URL_PROPERTY, editedSeries.getImageUrl());
-
-		return post(UPDATE_QUERY, parameters, MAP_SERMON_SERIES);
-	}
+        return postForOne(UPDATE_QUERY, parameters, COLUMNS).get(0);
+    }
 }
