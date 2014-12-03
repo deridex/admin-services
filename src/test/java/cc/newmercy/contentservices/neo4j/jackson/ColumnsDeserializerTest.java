@@ -1,11 +1,15 @@
 package cc.newmercy.contentservices.neo4j.jackson;
 
+import cc.newmercy.contentservices.config.jackson.ContentServicesModule;
 import cc.newmercy.contentservices.neo4j.json.Columns;
+import cc.newmercy.contentservices.neo4j.json.Result;
+import cc.newmercy.contentservices.neo4j.json.TransactionResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import org.junit.Test;
 import org.springframework.util.FileCopyUtils;
 
@@ -30,67 +34,67 @@ public class ColumnsDeserializerTest {
         }
     }
 
-    private static final List<Map<String, Double>> EXPECTED_STRING_TO_DOUBLES = ImmutableList.<Map<String, Double>> builder()
-            .add(ImmutableMap.<String, Double>builder()
-                    .put("one point two", 1.2)
-                    .put("two point three", 2.3)
+    private static final List<String> COLUMN_NAMES = Arrays.asList("map", "string", "pojo");
+
+    private static final int STRING_TO_OBJECT_IDX = 0;
+
+    private static final List<Map<String, Object>> EXPECTED_STRING_TO_OBJECTS = ImmutableList.<Map<String, Object>> builder()
+            .add(ImmutableMap.<String, Object>builder()
+                    .put("id", "map id 1")
+                    .put("name", "map name 1")
+                    .put("description", "map description 1")
                     .build())
-            .add(ImmutableMap.<String, Double> builder()
-                    .put("three point four", 3.4)
-                    .put("five point six", 5.6)
+            .add(ImmutableMap.<String, Object> builder()
+                    .put("id", "map id 2")
+                    .put("name", "map name 2")
+                    .put("description", "map description 2")
+                    .put("version", 1)
+                    .put("imageUrl", "http://2.image.com/2.png")
+                    .build())
+            .add(ImmutableMap.<String, Object> builder()
+                    .put("id", "map id 3")
+                    .put("name", "map name 3")
+                    .put("description", "map description 3")
+                    .put("imageUrl", "http://3.image.com/3.png")
                     .build())
             .build();
 
-    private static final String EXPECTED_OUTER_CONTAINER_NAME = "outer container name";
+    private static final int STRING_IDX = 1;
 
-    private static final String EXPECTED_INNER_CONTAINER_NAME = "inner container name";
+    private static final List<String> EXPECTED_STRINGS = Arrays.asList("string 1", "string 2", "string 3");
 
-    private static final List<String> EXPECTED_STRINGS = Arrays.asList("string 1", "string 2");
+    private static final int POJO_IDX = 2;
 
-    private static final List<String> EXPECTED_POJO_NAMES = Arrays.asList("pojo name 1", "pojo name 2");
+    private static final List<String> EXPECTED_POJO_NAMES = Arrays.asList("pojo name 1", "pojo name 2", "pojo name 3");
 
-    private static final List<Integer> EXPECTED_POJO_AGES = Arrays.asList(123, 456);
+    private static final List<Integer> EXPECTED_POJO_AGES = Arrays.asList(123, 456, 789);
 
-    private final ObjectMapper jsonMapper = new ObjectMapper().registerModule(new TestModule());
+    private final ObjectMapper jsonMapper = new ObjectMapper()
+            .registerModule(new ContentServicesModule())
+            .registerModule(new TestModule());
 
     @Test
     public void testRead() throws IOException {
-        OuterContainer<TestColumns> actualOuterContainer = jsonMapper.readValue(JSON, new TypeReference<OuterContainer<TestColumns>>() { });
+        TransactionResponse<TestColumns> response = jsonMapper.readValue(JSON, new TypeReference<TransactionResponse<TestColumns>>() { });
 
-        assertThat(actualOuterContainer.getName(), equalTo(EXPECTED_OUTER_CONTAINER_NAME));
+        List<Result<TestColumns>> results = response.getResults();
 
-        InnerContainer<TestColumns> actualInnerContainer = actualOuterContainer.getInnerContainer();
+        Result<TestColumns> result = results.get(0);
 
-        assertThat(actualInnerContainer.getName(), equalTo(EXPECTED_INNER_CONTAINER_NAME));
+        assertThat(result.getColumns(), equalTo(COLUMN_NAMES));
 
-        List<TestColumns> actualList = actualInnerContainer.getColumnsList();
+        List<TestColumns> rows = Lists.transform(result.getData(), datum -> datum.getRow());
 
-        assertThat(actualList.size(), equalTo(2));
+        assertThat(Lists.transform(rows, row -> row.<Map<String, Object>> get(STRING_TO_OBJECT_IDX)), equalTo(EXPECTED_STRING_TO_OBJECTS));
+        assertThat(Lists.transform(rows, row -> row.<String> get(STRING_IDX)), equalTo(EXPECTED_STRINGS));
+        assertThat(Lists.transform(rows, row -> row.<Pojo> get(POJO_IDX).getName()), equalTo(EXPECTED_POJO_NAMES));
+        assertThat(Lists.transform(rows, row -> row.<Pojo> get(POJO_IDX).getAge()), equalTo(EXPECTED_POJO_AGES));
 
-        TestColumns actualTestColumns = actualList.get(0);
-
-        assertThat(actualTestColumns.get(0), equalTo(EXPECTED_STRING_TO_DOUBLES.get(0)));
-
-        assertThat(actualTestColumns.get(1), equalTo(EXPECTED_STRINGS.get(0)));
-
-        Pojo actualPojo = actualTestColumns.get(2);
-
-        assertThat(actualPojo.getName(), equalTo(EXPECTED_POJO_NAMES.get(0)));
-        assertThat(actualPojo.getAge(), equalTo(EXPECTED_POJO_AGES.get(0)));
-
-        actualTestColumns = actualList.get(1);
-
-        assertThat(actualTestColumns.get(0), equalTo(EXPECTED_STRING_TO_DOUBLES.get(1)));
-
-        assertThat(actualTestColumns.get(1), equalTo(EXPECTED_STRINGS.get(1)));
-
-        actualPojo = actualTestColumns.get(2);
-
-        assertThat(actualPojo.getName(), equalTo(EXPECTED_POJO_NAMES.get(1)));
-        assertThat(actualPojo.getAge(), equalTo(EXPECTED_POJO_AGES.get(1)));
+        assertThat(rows.size(), equalTo(EXPECTED_STRING_TO_OBJECTS.size()));
+        assertThat(results.size(), equalTo(1));
     }
 
-    public static class StringToDoubleType extends TypeReference<Map<String, Double>> { }
+    public static class StringToObjectType extends TypeReference<Map<String, Object>> { }
 
     public static class StringType extends TypeReference<String> { }
 
@@ -119,10 +123,10 @@ public class ColumnsDeserializerTest {
 
     public static class PojoType extends TypeReference<Pojo> { }
 
-    @Columns.Types({ StringToDoubleType.class, StringType.class, PojoType.class })
+    @Columns.Types({ StringToObjectType.class, StringType.class, PojoType.class })
     public static class TestColumns extends Columns {
 
-        public static final StringToDoubleType STRING_TO_DOUBLE_TYPE = new StringToDoubleType();
+        public static final StringToObjectType STRING_TO_OBJECT_TYPE = new StringToObjectType();
 
         public static final StringType STRING_TYPE = new StringType();
 
@@ -131,52 +135,6 @@ public class ColumnsDeserializerTest {
         public TestColumns(List<Object> list) {
             super(list);
         }
-    }
-
-    public static class InnerContainer<COLUMNS> {
-
-        private String name;
-
-        private List<COLUMNS> columnsList;
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public List<COLUMNS> getColumnsList() {
-            return columnsList;
-        }
-
-        public void setColumnsList(List<COLUMNS> columnsList) {
-            this.columnsList = columnsList;
-        }
-    }
-
-    public static class OuterContainer<COLUMNS> {
-
-        private String name;
-
-        public InnerContainer<COLUMNS> getInnerContainer() {
-            return innerContainer;
-        }
-
-        public void setInnerContainer(InnerContainer<COLUMNS> innerContainer) {
-            this.innerContainer = innerContainer;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        private InnerContainer<COLUMNS> innerContainer;
     }
 
     public static class TestModule extends SimpleModule {{

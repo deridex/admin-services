@@ -1,9 +1,6 @@
 package cc.newmercy.contentservices.neo4j;
 
-import cc.newmercy.contentservices.neo4j.json.Result;
-import cc.newmercy.contentservices.neo4j.json.Statement;
-import cc.newmercy.contentservices.neo4j.json.TransactionRequest;
-import cc.newmercy.contentservices.neo4j.json.TransactionResponse;
+import cc.newmercy.contentservices.neo4j.json.*;
 import cc.newmercy.contentservices.repository.RepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,13 +74,13 @@ public class Neo4jRepository {
             throw new IllegalArgumentException("expected 1 result but got " + results.size());
         }
 
-        List<COLUMNS> data = results.get(0).getData();
+        List<Row<COLUMNS>> rows = results.get(0).getData();
 
-        if (data.size() != 1) {
-            throw new IllegalArgumentException("expected 1 row but got " + data.size());
+        if (rows.size() != 1) {
+            throw new IllegalArgumentException("expected 1 row but got " + rows.size());
         }
 
-        COLUMNS columns = data.get(0);
+        COLUMNS columns = rows.get(0).getRow();
 
         return columns;
     }

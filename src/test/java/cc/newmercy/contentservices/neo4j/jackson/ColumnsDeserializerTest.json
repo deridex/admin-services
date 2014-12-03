@@ -1,30 +1,65 @@
 {
-    "name": "outer container name",
-    "innerContainer": {
-        "columnsList": [
-            [
-                {
-                    "one point two": 1.2,
-                    "two point three": 2.3
-                },
-                "string 1",
-                {
-                    "name": "pojo name 1",
-                    "age": 123
-                }
+    "commit": "http:\/\/127.0.0.1:7474\/db\/data\/transaction\/3\/commit",
+    "results": [
+        {
+            "columns": [
+                "map",
+                "string",
+                "pojo"
             ],
-            [
+            "data": [
                 {
-                    "three point four": 3.4,
-                    "five point six": 5.6
+                    "row": [
+                        {
+                            "id": "map id 1",
+                            "name": "map name 1",
+                            "description": "map description 1"
+                        },
+                        "string 1",
+                        {
+                            "name": "pojo name 1",
+                            "age": 123
+                        }
+                    ]
                 },
-                "string 2",
                 {
-                    "name": "pojo name 2",
-                    "age": 456
+                    "row": [
+                        {
+                            "id": "map id 2",
+                            "name": "map name 2",
+                            "description": "map description 2",
+                            "version": 1,
+                            "imageUrl": "http:\/\/2.image.com\/2.png"
+                        },
+                        "string 2",
+                        {
+                            "name": "pojo name 2",
+                            "age": 456
+                        }
+                    ]
+                },
+                {
+                    "row": [
+                        {
+                            "id": "map id 3",
+                            "name": "map name 3",
+                            "description": "map description 3",
+                            "imageUrl": "http:\/\/3.image.com\/3.png"
+                        },
+                        "string 3",
+                        {
+                            "name": "pojo name 3",
+                            "age": 789
+                        }
+                    ]
                 }
             ]
-        ],
-        "name": "inner container name"
-    }
+        }
+    ],
+    "transaction": {
+        "expires": "Tue, 02 Dec 2014 04:27:18 +0000"
+    },
+    "errors": [
+
+    ]
 }

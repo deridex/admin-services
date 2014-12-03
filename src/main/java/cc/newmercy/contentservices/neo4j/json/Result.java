@@ -12,7 +12,7 @@ public class Result<COLUMNS> {
 
     private List<String> columns;
 
-    private List<COLUMNS> data;
+    private List<Row<COLUMNS>> data;
 
     /**
      * @return Column names.
@@ -24,7 +24,7 @@ public class Result<COLUMNS> {
     /**
      * @return Data mapped to the names returned by {@link #getColumns()}.
      */
-    public List<COLUMNS> getData() {
+    public List<Row<COLUMNS>> getData() {
         return data;
     }
 

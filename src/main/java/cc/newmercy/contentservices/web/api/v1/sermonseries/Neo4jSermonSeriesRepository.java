@@ -76,6 +76,7 @@ public class Neo4jSermonSeriesRepository extends Neo4jRepository implements Serm
         TransactionResponse<PersistentSermonSeriesColumns> response = post(LIST_QUERY, parameters, COLUMNS);
 
         List<PersistentSermonSeries> sermonSeriesList = response.getResults().get(0).getData().stream()
+                .map(datum -> datum.getRow())
                 .map(columns -> columns.<PersistentSermonSeries> get(0))
                 .collect(Collectors.toList());
 
