@@ -1,8 +1,11 @@
 package cc.newmercy.contentservices.web.config;
 
 import cc.newmercy.contentservices.ServerStopper;
+import cc.newmercy.contentservices.aws.AssetStorage;
 import cc.newmercy.contentservices.neo4j.Neo4jTransaction;
 import cc.newmercy.contentservices.web.api.v1.admin.AdminController;
+import cc.newmercy.contentservices.web.api.v1.asset.AssetController;
+import cc.newmercy.contentservices.web.api.v1.asset.AssetRepository;
 import cc.newmercy.contentservices.web.api.v1.sermon.SermonController;
 import cc.newmercy.contentservices.web.api.v1.sermonseries.SermonSeriesController;
 import cc.newmercy.contentservices.web.api.v1.sermonseries.SermonSeriesRepository;
@@ -42,6 +45,12 @@ public class WebConfiguration implements WebBindingInitializer {
 	@Autowired
 	private SermonSeriesRepository SermonSeriesRepository;
 
+	@Autowired
+	private AssetRepository assetRepository;
+
+	@Autowired
+	private AssetStorage assetStorage;
+
 	@Bean
 	public Object requestMappingHandlerAdapter() {
 		RequestMappingHandlerAdapter adapter = new RequestMappingHandlerAdapter();
@@ -66,6 +75,11 @@ public class WebConfiguration implements WebBindingInitializer {
 	@Bean
 	public SermonController sermonController() {
 		return new SermonController();
+	}
+
+	@Bean
+	public AssetController assetController() {
+		return new AssetController(assetRepository, assetStorage);
 	}
 
 	@Bean

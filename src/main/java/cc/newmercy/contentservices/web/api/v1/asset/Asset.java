@@ -1,20 +1,12 @@
-package cc.newmercy.contentservices.web.api.v1.sermon;
+package cc.newmercy.contentservices.web.api.v1.asset;
 
 public abstract class Asset {
-
-    private String url;
 
     private String contentType;
 
     private long length;
 
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
+    private String url;
 
     public String getContentType() {
         return contentType;
@@ -30,5 +22,13 @@ public abstract class Asset {
 
     public void setLength(long length) {
         this.length = length;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

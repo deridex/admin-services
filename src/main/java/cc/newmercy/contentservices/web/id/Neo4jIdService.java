@@ -2,7 +2,6 @@ package cc.newmercy.contentservices.web.id;
 
 import cc.newmercy.contentservices.neo4j.json.*;
 import cc.newmercy.contentservices.repository.RepositoryException;
-import com.google.common.base.Charsets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,6 +9,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.*;
@@ -22,11 +22,7 @@ public class Neo4jIdService implements IdService, AutoCloseable {
 
 	private static final int MAX_IDX = 1;
 
-	private static final String START_INCL_PROPERTY = "startIncl";
-
-	private static final String END_EXCL_PROPERTY = "endExcl";
-
-	private static final String FETCH_ID_BLOCK_QUERY = "match (n:Sequence) where n.name = { name } set n.next = n.next + n.increment return { startIncl: n.next - n.increment, endExcl: n.next }";
+	private static final String FETCH_ID_BLOCK_QUERY = "match (n:Sequence) where n.name = { name } set n.next = n.next + n.increment return { startIncl: n.next - n.increment, endExcl: n.next } as ids";
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -128,14 +124,14 @@ public class Neo4jIdService implements IdService, AutoCloseable {
 						+ statusInfo.getStatusCode() + " " + statusInfo.getReasonPhrase());
 			}
 
-			TransactionResponse txnResponse = response.readEntity(TransactionResponse.class);
+			TransactionResponse<IdBlockColumns> txnResponse = response.readEntity(new GenericType<TransactionResponse<IdBlockColumns>>() { });
 
 			if (!txnResponse.getErrors().isEmpty()) {
 				throw new RepositoryException("could not get id block for sequence '" + name + "': "
 						+ txnResponse.getErrors().toString());
 			}
 
-			List<Result> results = txnResponse.getResults();
+			List<Result<IdBlockColumns>> results = txnResponse.getResults();
 
 			if (results.isEmpty()) {
 				throw new IllegalArgumentException("no such sequence '" + name + "'");
@@ -144,7 +140,7 @@ public class Neo4jIdService implements IdService, AutoCloseable {
 			/*
 			 * One query, one result.
 			 */
-			List<Datum> data = results.get(0).getData();
+			List<Row<IdBlockColumns>> data = results.get(0).getData();
 
 			if (data.isEmpty()) {
 				throw new IllegalArgumentException("no such series '" + name + "'");
@@ -153,12 +149,11 @@ public class Neo4jIdService implements IdService, AutoCloseable {
 			/*
 			 * One row with one element.
 			 */
-			@SuppressWarnings("unchecked")
-			Map<String, Number> map = (Map<String, Number>) data.get(0).getRow().get(0);
+			IdBlock idBlock = data.get(0).getRow().get(0);
 
 			long[] range = new long[]{
-					map.get(START_INCL_PROPERTY).longValue(),
-					map.get(END_EXCL_PROPERTY).longValue()
+					idBlock.getStartIncl(),
+					idBlock.getEndExcl()
 			};
 
 			nameToRange.put(name, range);

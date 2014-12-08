@@ -1,7 +1,6 @@
 package cc.newmercy.contentservices.neo4j.json;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.Preconditions;
 
 import java.lang.annotation.ElementType;
@@ -10,7 +9,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.List;
 
-@JsonDeserialize()
 public abstract class Columns {
 
     private final List columns;

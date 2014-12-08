@@ -1,14 +1,22 @@
 package cc.newmercy.contentservices.config;
 
 import cc.newmercy.contentservices.ServerStopper;
+import cc.newmercy.contentservices.aws.AssetStorage;
+import cc.newmercy.contentservices.aws.S3AssetStorage;
 import cc.newmercy.contentservices.config.jackson.ContentServicesModule;
 import cc.newmercy.contentservices.jaxrs.ClientFactory;
 import cc.newmercy.contentservices.neo4j.Neo4jTransaction;
 import cc.newmercy.contentservices.neo4j.Neo4jTransactionManager;
+import cc.newmercy.contentservices.web.api.v1.asset.AssetRepository;
+import cc.newmercy.contentservices.web.api.v1.asset.Neo4jAssetRepository;
 import cc.newmercy.contentservices.web.api.v1.sermonseries.Neo4jSermonSeriesRepository;
 import cc.newmercy.contentservices.web.api.v1.sermonseries.SermonSeriesRepository;
 import cc.newmercy.contentservices.web.id.IdService;
 import cc.newmercy.contentservices.web.id.Neo4jIdService;
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 import org.springframework.context.annotation.Bean;
@@ -72,5 +80,22 @@ public class ContentServicesConfiguration {
     @Bean
     public IdService idService() {
         return new Neo4jIdService(neo4j());
+    }
+
+    @Bean
+    public AmazonS3 s3() {
+        AWSCredentials credentials = new BasicAWSCredentials("AKIAJUPSRMLEWZGWZNFQ", "VZwq3vgRAkHWhH5RpUTdsalFOjZVzuhCnGsziKon");
+
+        return new AmazonS3Client(credentials);
+    }
+
+    @Bean
+    public AssetStorage assetStorage() {
+        return new S3AssetStorage("content.newmercy.cc", s3());
+    }
+
+    @Bean
+    public AssetRepository assetRepository() {
+        return new Neo4jAssetRepository(idService(), neo4j(), neo4jTransaction());
     }
 }

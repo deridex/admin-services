@@ -125,13 +125,6 @@ public class ColumnsDeserializerTest {
 
     @Columns.Types({ StringToObjectType.class, StringType.class, PojoType.class })
     public static class TestColumns extends Columns {
-
-        public static final StringToObjectType STRING_TO_OBJECT_TYPE = new StringToObjectType();
-
-        public static final StringType STRING_TYPE = new StringType();
-
-        public static final PojoType POJO_TYPE = new PojoType();
-
         public TestColumns(List<Object> list) {
             super(list);
         }
