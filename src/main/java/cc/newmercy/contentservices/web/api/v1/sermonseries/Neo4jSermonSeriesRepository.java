@@ -73,7 +73,7 @@ public class Neo4jSermonSeriesRepository extends Neo4jRepository implements Serm
                 .getData();
 
         return rows.stream()
-                .map(datum -> datum.getRow().<PersistentSermonSeries> get(0))
+                .map(datum -> datum.getColumns().<PersistentSermonSeries> get(0))
                 .collect(Collectors.toList());
     }
 

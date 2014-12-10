@@ -151,10 +151,10 @@ public class JacksonEntityReaderTest {
 
         List<Row> rows = result.getData();
 
-        assertThat(Lists.transform(rows, row -> row.getRow().<String> get(STRING_IDX_1)), equalTo(EXPECTED_STRINGS_1));
-        assertThat(Lists.transform(rows, row -> row.getRow().<Map<String, Object>>get(STRING_TO_OBJECT_IDX_1)), equalTo(EXPECTED_STRING_TO_OBJECTS_1));
-        assertThat(Lists.transform(rows, row -> row.getRow().<Pojo> get(POJO_IDX_1).getName()), equalTo(EXPECTED_POJO_NAMES_1));
-        assertThat(Lists.transform(rows, row -> row.getRow().<Pojo> get(POJO_IDX_1).getAge()), equalTo(EXPECTED_POJO_AGES_1));
+        assertThat(Lists.transform(rows, row -> row.getColumns().<String> get(STRING_IDX_1)), equalTo(EXPECTED_STRINGS_1));
+        assertThat(Lists.transform(rows, row -> row.getColumns().<Map<String, Object>>get(STRING_TO_OBJECT_IDX_1)), equalTo(EXPECTED_STRING_TO_OBJECTS_1));
+        assertThat(Lists.transform(rows, row -> row.getColumns().<Pojo> get(POJO_IDX_1).getName()), equalTo(EXPECTED_POJO_NAMES_1));
+        assertThat(Lists.transform(rows, row -> row.getColumns().<Pojo> get(POJO_IDX_1).getAge()), equalTo(EXPECTED_POJO_AGES_1));
 
         result = results.get(1);
 
@@ -162,10 +162,10 @@ public class JacksonEntityReaderTest {
 
         rows = result.getData();
 
-        assertThat(Lists.transform(rows, row -> row.getRow().<Map<String, Object>>get(STRING_TO_OBJECT_IDX_2)), equalTo(EXPECTED_STRING_TO_OBJECTS_2));
-        assertThat(Lists.transform(rows, row -> row.getRow().<String> get(STRING_IDX_2)), equalTo(EXPECTED_STRINGS_2));
-        assertThat(Lists.transform(rows, row -> row.getRow().<Pojo> get(POJO_IDX_2).getName()), equalTo(EXPECTED_POJO_NAMES_2));
-        assertThat(Lists.transform(rows, row -> row.getRow().<Pojo> get(POJO_IDX_2).getAge()), equalTo(EXPECTED_POJO_AGES_2));
+        assertThat(Lists.transform(rows, row -> row.getColumns().<Map<String, Object>>get(STRING_TO_OBJECT_IDX_2)), equalTo(EXPECTED_STRING_TO_OBJECTS_2));
+        assertThat(Lists.transform(rows, row -> row.getColumns().<String> get(STRING_IDX_2)), equalTo(EXPECTED_STRINGS_2));
+        assertThat(Lists.transform(rows, row -> row.getColumns().<Pojo> get(POJO_IDX_2).getName()), equalTo(EXPECTED_POJO_NAMES_2));
+        assertThat(Lists.transform(rows, row -> row.getColumns().<Pojo> get(POJO_IDX_2).getAge()), equalTo(EXPECTED_POJO_AGES_2));
 
         assertThat(results.size(), equalTo(2));
     }

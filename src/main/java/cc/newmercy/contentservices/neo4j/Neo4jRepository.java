@@ -58,10 +58,29 @@ public class Neo4jRepository {
         Objects.requireNonNull(queries, "queries");
         Preconditions.checkArgument(queries.length > 0, "no queries");
 
+        Response response = executePost(queries);
+
+        neo4jTransaction.setTransactionUrl(response.getHeaderString("Location"));
+
+        EntityReader.Parser parser = entityReader.parse(queries[0].types.apply(jsonMapper.getTypeFactory()));
+
+        for (int i = 1; i < queries.length; i++) {
+            parser.then(queries[i].types.apply(jsonMapper.getTypeFactory()));
+        }
+
+        TransactionResponse txnResponse = parser.from(response);
+
+        if (!txnResponse.getErrors().isEmpty()) {
+            throw new RepositoryException(txnResponse.getErrors().toString());
+        }
+
+        return txnResponse.getResults();
+    }
+
+    private Response executePost(Query... queries) {
         List<Statement> statements = Arrays.asList(queries).stream()
                 .map(query -> {
                     Statement statement = new Statement();
-
                     statement.setStatement(query.cypher);
                     statement.setParameters(query.parameters);
 
@@ -82,26 +101,11 @@ public class Neo4jRepository {
 
             throw new RepositoryException(statusInfo.getStatusCode() + " " + statusInfo.getReasonPhrase());
         }
-
-        neo4jTransaction.setTransactionUrl(response.getHeaderString("Location"));
-
-        EntityReader.Parser parser = entityReader.parse(queries[0].types.apply(jsonMapper.getTypeFactory()));
-
-        for (int i = 1; i < queries.length; i++) {
-            parser.then(queries[i].types.apply(jsonMapper.getTypeFactory()));
-        }
-
-        TransactionResponse txnResponse = parser.from(response);
-
-        if (!txnResponse.getErrors().isEmpty()) {
-            throw new RepositoryException(txnResponse.getErrors().toString());
-        }
-
-        return txnResponse.getResults();
+        return response;
     }
 
     protected final <T> T postForOne(Query... queries) {
-        return post(queries).get(0).getData().get(0).getRow().get(0);
+        return post(queries).get(0).getData().get(0).getColumns().get(0);
     }
 
     protected final Query query(String cypher, JavaType... types) {

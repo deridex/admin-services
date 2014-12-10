@@ -145,7 +145,7 @@ public class Neo4jIdService implements IdService, AutoCloseable {
 			/*
 			 * One row with one element.
 			 */
-			IdBlock idBlock = data.get(0).getRow().get(0);
+			IdBlock idBlock = data.get(0).getColumns().get(0);
 
 			long[] range = new long[] { idBlock.getStartIncl(), idBlock.getEndExcl() };
 
