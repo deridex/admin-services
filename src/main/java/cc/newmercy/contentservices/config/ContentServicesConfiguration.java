@@ -1,5 +1,8 @@
 package cc.newmercy.contentservices.config;
 
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.WebTarget;
+
 import cc.newmercy.contentservices.ServerStopper;
 import cc.newmercy.contentservices.aws.AssetStorage;
 import cc.newmercy.contentservices.aws.S3AssetStorage;
@@ -7,6 +10,7 @@ import cc.newmercy.contentservices.config.jackson.ContentServicesModule;
 import cc.newmercy.contentservices.jaxrs.ClientFactory;
 import cc.newmercy.contentservices.neo4j.Neo4jTransaction;
 import cc.newmercy.contentservices.neo4j.Neo4jTransactionManager;
+import cc.newmercy.contentservices.neo4j.jackson.JacksonEntityReader;
 import cc.newmercy.contentservices.web.api.v1.asset.AssetRepository;
 import cc.newmercy.contentservices.web.api.v1.asset.Neo4jAssetRepository;
 import cc.newmercy.contentservices.web.api.v1.sermonseries.Neo4jSermonSeriesRepository;
@@ -25,9 +29,6 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.WebTarget;
-
 @Configuration
 @EnableAspectJAutoProxy
 @EnableTransactionManagement
@@ -38,11 +39,16 @@ public class ContentServicesConfiguration {
     }
 
     @Bean
+    public JacksonEntityReader jacksonEntityReader() {
+        return new JacksonEntityReader();
+    }
+
+    @Bean
     public ObjectMapper jsonMapper() {
         ObjectMapper jsonMapper = new ObjectMapper();
 
         jsonMapper.registerModule(new JSR310Module());
-        jsonMapper.registerModule(new ContentServicesModule());
+        jsonMapper.registerModule(new ContentServicesModule(jacksonEntityReader()));
 
         return jsonMapper;
     }
@@ -74,7 +80,7 @@ public class ContentServicesConfiguration {
 
     @Bean
     public SermonSeriesRepository sermonSeriesRepository() {
-        return new Neo4jSermonSeriesRepository(idService(), neo4j(), neo4jTransaction());
+        return new Neo4jSermonSeriesRepository(idService(), neo4j(), neo4jTransaction(), jsonMapper(), jacksonEntityReader());
     }
 
     @Bean
@@ -96,6 +102,6 @@ public class ContentServicesConfiguration {
 
     @Bean
     public AssetRepository assetRepository() {
-        return new Neo4jAssetRepository(idService(), neo4j(), neo4jTransaction());
+        return new Neo4jAssetRepository(idService(), neo4j(), neo4jTransaction(), jsonMapper(), jacksonEntityReader());
     }
 }

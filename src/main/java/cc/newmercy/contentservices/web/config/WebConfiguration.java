@@ -1,5 +1,7 @@
 package cc.newmercy.contentservices.web.config;
 
+import java.util.Arrays;
+
 import cc.newmercy.contentservices.ServerStopper;
 import cc.newmercy.contentservices.aws.AssetStorage;
 import cc.newmercy.contentservices.neo4j.Neo4jTransaction;
@@ -23,8 +25,6 @@ import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
-
-import java.util.Arrays;
 
 @Configuration
 @EnableAspectJAutoProxy
@@ -74,7 +74,8 @@ public class WebConfiguration implements WebBindingInitializer {
 
 	@Bean
 	public SermonController sermonController() {
-		return new SermonController();
+//		return new SermonController(sermonRepository);
+		return null;
 	}
 
 	@Bean

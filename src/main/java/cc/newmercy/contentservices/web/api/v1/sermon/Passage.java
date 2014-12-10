@@ -2,34 +2,51 @@ package cc.newmercy.contentservices.web.api.v1.sermon;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 public class Passage {
     @NotEmpty
-    private String start;
+    private String book;
 
-    @NotEmpty
-    private String end;
+    @NotNull
+    @Valid
+    private Verse start;
 
-    public String getStart() {
+    @NotNull
+    @Valid
+    private Verse end;
+
+    public String getBook() {
+        return book;
+    }
+
+    public void setBook(String book) {
+        this.book = book;
+    }
+
+    public Verse getStart() {
         return start;
     }
 
-    public void setStart(String start) {
+    public void setStart(Verse start) {
         this.start = start;
     }
 
-    public String getEnd() {
+    public Verse getEnd() {
         return end;
     }
 
-    public void setEnd(String end) {
+    public void setEnd(Verse end) {
         this.end = end;
     }
 
     @Override
     public String toString() {
         return "Passage{" +
-                "start='" + start + '\'' +
-                ", end='" + end + '\'' +
+                "book='" + book + '\'' +
+                ", start=" + start +
+                ", end=" + end +
                 '}';
     }
 }

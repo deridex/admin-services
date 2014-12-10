@@ -1,23 +1,23 @@
 package cc.newmercy.contentservices.neo4j.json;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import java.util.List;
-
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class TransactionResponse<COLUMNS> {
+public class TransactionResponse {
 
-    private List<Result<COLUMNS>> results;
+    private List<Result> results;
 
     private List<Error> errors;
 
     /**
      * Returns query results. Each passed statement has a corresponding result.
      */
-    public List<Result<COLUMNS>> getResults() {
+    public List<Result> getResults() {
         return results;
     }
 

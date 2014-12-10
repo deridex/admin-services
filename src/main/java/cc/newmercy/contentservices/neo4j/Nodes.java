@@ -4,16 +4,16 @@ import java.util.Formatter;
 
 public final class Nodes {
 
-	private Nodes() { }
+	public static final String ID_PROPERTY = "id";
 
-	public static String createNodeQuery(String label, String... properties) {
+	public static String createNodeQuery(String label, boolean hasId, String... properties) {
 		StringBuilder query = new StringBuilder();
 
 		try (Formatter formatter = new Formatter(query)) {
-			formatter.format("create (n:%s { %s: { %2$s }", label, properties[0]);
+			formatter.format("create (n:%s { %s: { %2$s }", label, ID_PROPERTY);
 
-			for (int i = 1; i < properties.length; i++) {
-				formatter.format(", %s: { %1$s }", properties[i]);
+			for (String property : properties) {
+				formatter.format(", %s: { %1$s }", property);
 			}
 		}
 
@@ -22,21 +22,21 @@ public final class Nodes {
 		return query.toString();
 	}
 
-	public static String getNodeQuery(String label, String idProperty) {
+	public static String getNodeQuery(String label) {
 		StringBuilder query = new StringBuilder();
 
 		try (Formatter formatter = new Formatter(query)) {
-			formatter.format("match (n:%s) where n.%s = { %2$s } return n", label, idProperty);
+			formatter.format("match (n:%s) where n.%s = { %2$s } return n", label, ID_PROPERTY);
 		}
 
 		return query.toString();
 	}
 
-	public static String updateNodeQuery(String label, String idProperty, String... properties) {
+	public static String updateNodeQuery(String label, String... properties) {
 		StringBuilder query = new StringBuilder();
 
 		try (Formatter formatter = new Formatter(query)) {
-			formatter.format("match (n:%s) where n.%s = { %2$s } set n.%s = { %3$s }", label, idProperty, properties[0]);
+			formatter.format("match (n:%s) where n.%s = { %2$s } set n.%s = { %3$s }", label, ID_PROPERTY, properties[0]);
 
 			for (int i = 1; i < properties.length; i++) {
 				formatter.format(", n.%s = { %1$s }", properties[i]);
@@ -47,4 +47,6 @@ public final class Nodes {
 
 		return query.toString();
 	}
+
+	private Nodes() { }
 }

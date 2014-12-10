@@ -1,8 +1,9 @@
 package cc.newmercy.contentservices.web.api.v1.sermon;
 
+import cc.newmercy.contentservices.validation.collection.NotEmptyString;
+import cc.newmercy.contentservices.validation.collection.SupplementalCollectionConstraints;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.validation.Valid;
 import java.util.List;
 
 public abstract class SermonCommonFields {
@@ -12,9 +13,9 @@ public abstract class SermonCommonFields {
     @NotEmpty
     private String description;
 
+    @SupplementalCollectionConstraints(NotEmptyString.class)
     @NotEmpty
-    @Valid
-    private List<Passage> passages;
+    private List<String> passages;
 
     public String getName() {
         return name;
@@ -32,11 +33,11 @@ public abstract class SermonCommonFields {
         this.description = description;
     }
 
-    public List<Passage> getPassages() {
+    public List<String> getPassages() {
         return passages;
     }
 
-    public void setPassages(List<Passage> passages) {
+    public void setPassages(List<String> passages) {
         this.passages = passages;
     }
 }

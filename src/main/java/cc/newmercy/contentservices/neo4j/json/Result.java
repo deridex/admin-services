@@ -1,18 +1,18 @@
 package cc.newmercy.contentservices.neo4j.json;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import java.util.List;
-
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Result<COLUMNS> {
+public class Result {
 
     private List<String> columns;
 
-    private List<Row<COLUMNS>> data;
+    private List<Row> data;
 
     /**
      * @return Column names.
@@ -24,7 +24,7 @@ public class Result<COLUMNS> {
     /**
      * @return Data mapped to the names returned by {@link #getColumns()}.
      */
-    public List<Row<COLUMNS>> getData() {
+    public List<Row> getData() {
         return data;
     }
 

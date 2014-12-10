@@ -1,20 +1,20 @@
 package cc.newmercy.contentservices.web.id;
 
-import cc.newmercy.contentservices.neo4j.json.*;
-import cc.newmercy.contentservices.repository.RepositoryException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
+
+import cc.newmercy.contentservices.neo4j.jackson.EntityReader;
+import cc.newmercy.contentservices.neo4j.json.*;
+import cc.newmercy.contentservices.repository.RepositoryException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Neo4jIdService implements IdService, AutoCloseable {
 
@@ -31,6 +31,8 @@ public class Neo4jIdService implements IdService, AutoCloseable {
 	private final Map<String, long[]> nameToRange = new HashMap<>();
 
 	private final WebTarget neo4jCommit;
+
+	private final EntityReader entityReader = null;
 
 	public Neo4jIdService(WebTarget neo4j) {
 		this.neo4jCommit = neo4j.path("commit");
@@ -124,23 +126,17 @@ public class Neo4jIdService implements IdService, AutoCloseable {
 						+ statusInfo.getStatusCode() + " " + statusInfo.getReasonPhrase());
 			}
 
-			TransactionResponse<IdBlockColumns> txnResponse = response.readEntity(new GenericType<TransactionResponse<IdBlockColumns>>() { });
+			TransactionResponse txnResponse = entityReader.parse(IdBlock.class).from(response);
 
 			if (!txnResponse.getErrors().isEmpty()) {
 				throw new RepositoryException("could not get id block for sequence '" + name + "': "
 						+ txnResponse.getErrors().toString());
 			}
 
-			List<Result<IdBlockColumns>> results = txnResponse.getResults();
-
-			if (results.isEmpty()) {
-				throw new IllegalArgumentException("no such sequence '" + name + "'");
-			}
-
 			/*
 			 * One query, one result.
 			 */
-			List<Row<IdBlockColumns>> data = results.get(0).getData();
+			List<Row> data = txnResponse.getResults().get(0).getData();
 
 			if (data.isEmpty()) {
 				throw new IllegalArgumentException("no such series '" + name + "'");
@@ -151,10 +147,7 @@ public class Neo4jIdService implements IdService, AutoCloseable {
 			 */
 			IdBlock idBlock = data.get(0).getRow().get(0);
 
-			long[] range = new long[]{
-					idBlock.getStartIncl(),
-					idBlock.getEndExcl()
-			};
+			long[] range = new long[] { idBlock.getStartIncl(), idBlock.getEndExcl() };
 
 			nameToRange.put(name, range);
 

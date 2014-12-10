@@ -6,8 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.Map;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 @Transactional
 @RequestMapping(value = "/v1/sermon-series/{sermonSeriesId}/sermons", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -15,11 +14,19 @@ public class SermonController {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
+    private final SermonRepository sermonRepository;
+
+    public SermonController(SermonRepository sermonRepository) {
+        this.sermonRepository = checkNotNull(sermonRepository, "sermon repository");
+    }
+
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public Map<?, ?> add(@PathVariable("sermonSeriesId") String sermonSeriesId, @RequestBody TransientSermon sermon) {
+    public PersistentSermon addSermon(@PathVariable("sermonSeriesId") String sermonSeriesId, @RequestBody TransientSermon sermon) {
         logger.debug("adding {} sermon {}", sermonSeriesId, sermon);
 
-        return Collections.emptyMap();
+        PersistentSermon persistentSermon = sermonRepository.save(sermonSeriesId, sermon);
+
+        return persistentSermon;
     }
 }
