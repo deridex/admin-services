@@ -1,16 +1,14 @@
 package cc.newmercy.contentservices.web.api.v1.sermonseries;
 
 import javax.ws.rs.client.WebTarget;
-import java.util.Collections;
-import java.util.HashMap;
+import java.time.Instant;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
-import cc.newmercy.contentservices.neo4j.jackson.EntityReader;
 import cc.newmercy.contentservices.neo4j.Neo4jRepository;
 import cc.newmercy.contentservices.neo4j.Neo4jTransaction;
 import cc.newmercy.contentservices.neo4j.Nodes;
+import cc.newmercy.contentservices.neo4j.jackson.EntityReader;
 import cc.newmercy.contentservices.neo4j.json.Row;
 import cc.newmercy.contentservices.web.id.IdService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,6 +23,8 @@ public class Neo4jSermonSeriesRepository extends Neo4jRepository implements Serm
     private static final String DESCRIPTION_PROPERTY = "description";
 
     private static final String NAME_PROPERTY = "name";
+
+    private static final String CREATED_AT_PROPERTY = "createdAt";
 
     private static final String SERMON_SERIES_LABEL = "SermonSeries";
 
@@ -42,7 +42,8 @@ public class Neo4jSermonSeriesRepository extends Neo4jRepository implements Serm
             true,
             NAME_PROPERTY,
             DESCRIPTION_PROPERTY,
-            IMAGE_URL_PROPERTY);
+            IMAGE_URL_PROPERTY,
+            CREATED_AT_PROPERTY);
 
     private static final String GET_QUERY = Nodes.getNodeQuery(SERMON_SERIES_LABEL);
 
@@ -78,35 +79,22 @@ public class Neo4jSermonSeriesRepository extends Neo4jRepository implements Serm
     }
 
     @Override
-    public PersistentSermonSeries save(TransientSermonSeries transientSeries) {
-        Map<String, Object> parameters = new HashMap<>(4, 1);
-        parameters.put(Nodes.ID_PROPERTY, nextId(ID_SERIES_NAME));
-        parameters.put(NAME_PROPERTY, transientSeries.getName());
-        parameters.put(DESCRIPTION_PROPERTY, transientSeries.getDescription());
-        parameters.put(IMAGE_URL_PROPERTY, transientSeries.getImageUrl());
-
+    public PersistentSermonSeries save(TransientSermonSeries transientSeries, Instant now) {
         return postForOne(query(SAVE_QUERY, PersistentSermonSeries.class)
                 .set(Nodes.ID_PROPERTY, nextId(ID_SERIES_NAME))
                 .set(NAME_PROPERTY, transientSeries.getName())
                 .set(DESCRIPTION_PROPERTY, transientSeries.getDescription())
-                .set(IMAGE_URL_PROPERTY, transientSeries.getImageUrl()));
+                .set(IMAGE_URL_PROPERTY, transientSeries.getImageUrl())
+                .set(CREATED_AT_PROPERTY, now));
     }
 
     @Override
     public PersistentSermonSeries get(String id) {
-        Map<String, Object> parameters = Collections.singletonMap(Nodes.ID_PROPERTY, id);
-
         return postForOne(query(GET_QUERY, PersistentSermonSeries.class).set(Nodes.ID_PROPERTY, id));
     }
 
     @Override
     public PersistentSermonSeries update(String id, EditedSermonSeries editedSeries) {
-        Map<String, Object> parameters = new HashMap<>(4, 1);
-        parameters.put(Nodes.ID_PROPERTY, id);
-        parameters.put(NAME_PROPERTY, editedSeries.getName());
-        parameters.put(DESCRIPTION_PROPERTY, editedSeries.getDescription());
-        parameters.put(IMAGE_URL_PROPERTY, editedSeries.getImageUrl());
-
         return postForOne(query(UPDATE_QUERY, PersistentSermonSeries.class)
                 .set(Nodes.ID_PROPERTY, id)
                 .set(NAME_PROPERTY, editedSeries.getName())
@@ -114,3 +102,4 @@ public class Neo4jSermonSeriesRepository extends Neo4jRepository implements Serm
                 .set(IMAGE_URL_PROPERTY, editedSeries.getImageUrl()));
     }
 }
+

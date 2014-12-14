@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import cc.newmercy.contentservices.neo4j.jackson.EntityReader;
 import cc.newmercy.contentservices.neo4j.json.*;
 import cc.newmercy.contentservices.repository.RepositoryException;
+import com.google.common.base.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,10 +33,11 @@ public class Neo4jIdService implements IdService, AutoCloseable {
 
 	private final WebTarget neo4jCommit;
 
-	private final EntityReader entityReader = null;
+	private final EntityReader entityReader;
 
-	public Neo4jIdService(WebTarget neo4j) {
+	public Neo4jIdService(WebTarget neo4j, EntityReader entityReader) {
 		this.neo4jCommit = neo4j.path("commit");
+		this.entityReader = Preconditions.checkNotNull(entityReader, "entity reader");
 	}
 
 	@PostConstruct

@@ -1,26 +1,21 @@
 package cc.newmercy.contentservices.web.api.v1.sermonseries;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import javax.validation.Validator;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
+import cc.newmercy.contentservices.web.time.ConsistentClock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 @Transactional
 @RequestMapping(value = "/v1/sermon-series", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -32,9 +27,12 @@ public class SermonSeriesController {
 
 	private final Validator validator;
 
-	public SermonSeriesController(SermonSeriesRepository repo, Validator validator) {
+	private final ConsistentClock clock;
+
+	public SermonSeriesController(SermonSeriesRepository repo, Validator validator, ConsistentClock clock) {
 		this.repo = Objects.requireNonNull(repo, "sermon series repository");
 		this.validator = Objects.requireNonNull(validator, "validator");
+		this.clock = Objects.requireNonNull(clock, "clock");
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
@@ -56,7 +54,7 @@ public class SermonSeriesController {
 
 		logger.debug("saving new sermon series {}", transientSermonSeries);
 
-		return repo.save(transientSermonSeries);
+		return repo.save(transientSermonSeries, clock.now());
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)

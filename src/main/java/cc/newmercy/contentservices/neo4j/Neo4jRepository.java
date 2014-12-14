@@ -1,12 +1,13 @@
 package cc.newmercy.contentservices.neo4j;
 
+import java.time.Instant;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import cc.newmercy.contentservices.neo4j.jackson.EntityReader;
 import cc.newmercy.contentservices.neo4j.json.Result;
@@ -16,6 +17,7 @@ import cc.newmercy.contentservices.neo4j.json.TransactionResponse;
 import cc.newmercy.contentservices.repository.RepositoryException;
 import cc.newmercy.contentservices.util.Arguments;
 import cc.newmercy.contentservices.web.id.IdService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
@@ -143,10 +145,44 @@ public class Neo4jRepository {
             this.types = types;
         }
 
-        public Query set(String parameter, Object argument) {
-            if (parameters.put(parameter, argument) != null) {
+        public Query set(String parameter, String argument) {
+            return set(parameter, (Object) argument);
+        }
+
+        public Query set(String parameter, Integer argument) {
+            return set(parameter, (Object) argument);
+        }
+
+        public Query set(String parameter, Long argument) {
+            return set(parameter, (Object) argument);
+        }
+
+        public Query set(String parameter, Double argument) {
+            return set(parameter, (Object) argument);
+        }
+
+        public Query set(String parameter, Instant argument) {
+            if (argument == null) {
+                return set(parameter, (Object) null);
+            }
+
+            try {
+                return set(parameter, (Object) jsonMapper.writeValueAsString(argument));
+            } catch (JsonProcessingException e) {
+                throw new IllegalArgumentException(e);
+            }
+        }
+
+        public Query setStrings(String parameter, List<String> argument) {
+            return set(parameter, argument);
+        }
+
+        private Query set(String parameter, Object argument) {
+            if (parameters.containsKey(parameter)) {
                 throw new IllegalArgumentException("duplicate parameter '" + parameter + "'");
             }
+
+            parameters.put(parameter, argument);
 
             return this;
         }

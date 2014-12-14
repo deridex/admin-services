@@ -22,6 +22,7 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -49,6 +50,8 @@ public class ContentServicesConfiguration {
 
         jsonMapper.registerModule(new JSR310Module());
         jsonMapper.registerModule(new ContentServicesModule(jacksonEntityReader()));
+
+        jsonMapper.setDateFormat(new ISO8601DateFormat());
 
         return jsonMapper;
     }
@@ -85,7 +88,7 @@ public class ContentServicesConfiguration {
 
     @Bean
     public IdService idService() {
-        return new Neo4jIdService(neo4j());
+        return new Neo4jIdService(neo4j(), jacksonEntityReader());
     }
 
     @Bean

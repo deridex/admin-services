@@ -1,5 +1,6 @@
 package cc.newmercy.contentservices.web.api.v1.sermonseries;
 
+import java.time.Instant;
 import java.util.Objects;
 
 public class PersistentSermonSeries extends SermonSeriesCommonFields {
@@ -7,6 +8,8 @@ public class PersistentSermonSeries extends SermonSeriesCommonFields {
     private String id;
 
     private int version;
+
+    private Instant createdAt;
 
     public PersistentSermonSeries() { }
 
@@ -24,6 +27,14 @@ public class PersistentSermonSeries extends SermonSeriesCommonFields {
 
     public void setVersion(int version) {
         this.version = version;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
     }
 
     @Override
@@ -49,6 +60,6 @@ public class PersistentSermonSeries extends SermonSeriesCommonFields {
     @Override
     public String toString() {
         return "PersistentSermonSeries [id=" + id + ", version=" + version + ", name=" + getName() + ", description="
-                + getDescription() + ", imageUrl=" + getImageUrl() + "]";
+                + getDescription() + ", imageUrl=" + getImageUrl() + ", createdAt=" + createdAt + "]";
     }
 }

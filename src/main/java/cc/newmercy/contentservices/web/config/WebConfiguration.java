@@ -11,11 +11,11 @@ import cc.newmercy.contentservices.web.api.v1.asset.AssetRepository;
 import cc.newmercy.contentservices.web.api.v1.sermon.SermonController;
 import cc.newmercy.contentservices.web.api.v1.sermonseries.SermonSeriesController;
 import cc.newmercy.contentservices.web.api.v1.sermonseries.SermonSeriesRepository;
+import cc.newmercy.contentservices.web.time.ConsistentClock;
+import cc.newmercy.contentservices.web.time.DefaultClock;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.annotation.*;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.bind.WebDataBinder;
@@ -63,8 +63,14 @@ public class WebConfiguration implements WebBindingInitializer {
 	}
 
 	@Bean
+	@Scope(value = "request", proxyMode = ScopedProxyMode.INTERFACES)
+	public ConsistentClock consistentClock() {
+		return new DefaultClock();
+	}
+
+	@Bean
 	public SermonSeriesController sermonSeriesController() {
-		return new SermonSeriesController(SermonSeriesRepository, validator);
+		return new SermonSeriesController(SermonSeriesRepository, validator, consistentClock());
 	}
 
 	@Bean

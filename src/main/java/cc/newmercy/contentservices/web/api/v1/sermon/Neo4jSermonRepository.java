@@ -50,6 +50,6 @@ public class Neo4jSermonRepository extends Neo4jRepository implements SermonRepo
                 .set(Nodes.ID_PROPERTY, id)
                 .set(NAME_PROPERTY, transientSermon.getName())
                 .set(DESCRIPTION_PROPERTY, transientSermon.getDescription())
-                .set(PASSAGES_PROPERTY, transientSermon.getPassages()));
+                .setStrings(PASSAGES_PROPERTY, transientSermon.getPassages()));
     }
 }
