@@ -1,10 +1,11 @@
 package cc.newmercy.contentservices.neo4j;
 
-import java.util.Objects;
-
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.MediaType;
+import java.util.Objects;
 
+import cc.newmercy.contentservices.neo4j.json.TransactionResponse;
+import com.google.common.base.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.TransactionDefinition;
@@ -12,10 +13,6 @@ import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.TransactionSystemException;
 import org.springframework.transaction.support.AbstractPlatformTransactionManager;
 import org.springframework.transaction.support.DefaultTransactionStatus;
-
-import cc.newmercy.contentservices.neo4j.json.TransactionResponse;
-
-import com.google.common.base.Preconditions;
 
 public class Neo4jTransactionManager extends AbstractPlatformTransactionManager {
 
@@ -102,7 +99,7 @@ public class Neo4jTransactionManager extends AbstractPlatformTransactionManager 
 				Preconditions.checkArgument(currentUrl.equals(url), "transaction '%s' in progress but got '%s'",
 						Neo4jTransactionManager.this.url.get(), url);
 			} else {
-				logger.debug("setting transaction '%s'", url);
+				logger.debug("setting transaction '{}'", url);
 
 				Neo4jTransactionManager.this.url.set(url);
 			}
