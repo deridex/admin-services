@@ -1,11 +1,8 @@
-package cc.newmercy.contentservices.web.config;
+package cc.newmercy.contentservices.web.api.v1.config;
 
 import java.util.Arrays;
 
-import cc.newmercy.contentservices.ServerStopper;
 import cc.newmercy.contentservices.aws.AssetStorage;
-import cc.newmercy.contentservices.neo4j.Neo4jTransaction;
-import cc.newmercy.contentservices.web.api.v1.admin.AdminController;
 import cc.newmercy.contentservices.web.api.v1.asset.AssetController;
 import cc.newmercy.contentservices.web.api.v1.asset.AssetRepository;
 import cc.newmercy.contentservices.web.api.v1.sermon.SermonController;
@@ -29,18 +26,12 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 @Configuration
 @EnableAspectJAutoProxy
 @EnableWebMvc
-public class WebConfiguration implements WebBindingInitializer {
+public class ApiConfiguration implements WebBindingInitializer {
 	@Autowired
 	private ObjectMapper jsonMapper;
 
 	@Autowired
 	private LocalValidatorFactoryBean validator;
-
-	@Autowired
-	private ServerStopper serverStopper;
-
-	@Autowired
-	private Neo4jTransaction neo4jTransaction;
 
 	@Autowired
 	private SermonSeriesRepository SermonSeriesRepository;
@@ -71,11 +62,6 @@ public class WebConfiguration implements WebBindingInitializer {
 	@Bean
 	public SermonSeriesController sermonSeriesController() {
 		return new SermonSeriesController(SermonSeriesRepository, validator, consistentClock());
-	}
-
-	@Bean
-	public AdminController adminController() {
-		return new AdminController(serverStopper);
 	}
 
 	@Bean

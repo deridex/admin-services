@@ -1,5 +1,9 @@
 package cc.newmercy.contentservices.web.api.v1.asset;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.io.IOException;
+
 import cc.newmercy.contentservices.aws.AssetStorage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,10 +14,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 @Transactional
 @RequestMapping(value = "/v1/assets", produces = MediaType.APPLICATION_JSON_VALUE)

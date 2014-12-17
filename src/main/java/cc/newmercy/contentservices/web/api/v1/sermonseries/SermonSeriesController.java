@@ -1,14 +1,14 @@
 package cc.newmercy.contentservices.web.api.v1.sermonseries;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import javax.validation.Validator;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
 
 import cc.newmercy.contentservices.web.time.ConsistentClock;
 import org.slf4j.Logger;

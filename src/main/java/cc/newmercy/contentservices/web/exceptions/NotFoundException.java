@@ -1,4 +1,4 @@
-package cc.newmercy.contentservices.web.api.exceptions;
+package cc.newmercy.contentservices.web.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

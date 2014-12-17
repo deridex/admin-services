@@ -6,4 +6,12 @@ angular.module('contentServices', ['restangular'])
 					Accept: 'application/json'
 				});
 			});
+		}])
+		.factory('adminApi', ['Restangular', function(Restangular) {
+			return Restangular.withConfig(function(RestangularConfigurer) {
+				RestangularConfigurer.setBaseUrl('/admin');
+				RestangularConfigurer.setDefaultHeaders({
+					Accept: 'application/json'
+				});
+			});
 		}]);

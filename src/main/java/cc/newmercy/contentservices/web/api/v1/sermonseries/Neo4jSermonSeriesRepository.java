@@ -1,9 +1,9 @@
 package cc.newmercy.contentservices.web.api.v1.sermonseries;
 
-import javax.ws.rs.client.WebTarget;
 import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.ws.rs.client.WebTarget;
 
 import cc.newmercy.contentservices.neo4j.Neo4jRepository;
 import cc.newmercy.contentservices.neo4j.Neo4jTransaction;
@@ -32,7 +32,7 @@ public class Neo4jSermonSeriesRepository extends Neo4jRepository implements Serm
 
     private static final String PAGE_SIZE_PARAM = "pageSize";
 
-    private static final String LIST_QUERY = String.format("match (n:%s) return n order by n.created_at skip { %s } limit { %s }",
+    private static final String LIST_QUERY = String.format("match (n:%s) return n order by n.createdAt desc skip { %s } limit { %s }",
             SERMON_SERIES_LABEL,
             SKIP_PARAM,
             PAGE_SIZE_PARAM);

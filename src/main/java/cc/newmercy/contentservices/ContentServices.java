@@ -2,6 +2,9 @@ package cc.newmercy.contentservices;
 
 import java.lang.management.ManagementFactory;
 
+import cc.newmercy.contentservices.config.ContentServicesConfiguration;
+import cc.newmercy.contentservices.web.admin.config.AdminConfiguration;
+import cc.newmercy.contentservices.web.api.v1.config.ApiConfiguration;
 import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
@@ -15,9 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
-
-import cc.newmercy.contentservices.config.ContentServicesConfiguration;
-import cc.newmercy.contentservices.web.config.WebConfiguration;
 
 public class ContentServices {
 
@@ -60,8 +60,11 @@ public class ContentServices {
 
 		server.addBean(new MBeanContainer(ManagementFactory.getPlatformMBeanServer()));
 
-		ContextHandler servletHandler = newServletHandler(rootInjector);
-		servletHandler.setContextPath("/api");
+		ContextHandler apiServletHandler = newServletHandler(rootInjector, ApiConfiguration.class);
+		apiServletHandler.setContextPath("/api");
+
+		ContextHandler adminServletHandler = newServletHandler(rootInjector, AdminConfiguration.class);
+		adminServletHandler.setContextPath("/admin");
 
 		ContextHandler jsResourceHandler = newClasspathResourceHandler("/js");
 		jsResourceHandler.setContextPath("/js");
@@ -70,23 +73,21 @@ public class ContentServices {
 		appResourceHandler.setContextPath("/app");
 
 		ContextHandlerCollection handlerCollection = new ContextHandlerCollection();
-		handlerCollection.setHandlers(new Handler[] { servletHandler, jsResourceHandler, appResourceHandler });
+		handlerCollection.setHandlers(new Handler[] { jsResourceHandler, appResourceHandler, apiServletHandler, adminServletHandler });
 
 		server.setHandler(handlerCollection);
 
 		return server;
 	}
 
-	private static ContextHandler newServletHandler(AnnotationConfigWebApplicationContext rootInjector) {
+	private static ContextHandler newServletHandler(AnnotationConfigWebApplicationContext rootInjector, Class<?> config) {
 		ServletContextHandler servletHandler = new ServletContextHandler(ServletContextHandler.SESSIONS | ServletContextHandler.SECURITY);
 
-		AnnotationConfigWebApplicationContext webInjector = new AnnotationConfigWebApplicationContext();
-		webInjector.register(WebConfiguration.class);
-		webInjector.setParent(rootInjector);
+		AnnotationConfigWebApplicationContext injector = new AnnotationConfigWebApplicationContext();
+		injector.register(config);
+		injector.setParent(rootInjector);
 
-		ServletHolder servletHolder = new ServletHolder(new DispatcherServlet(webInjector));
-
-		servletHandler.addServlet(servletHolder, "/");
+		servletHandler.addServlet(new ServletHolder(new DispatcherServlet(injector)), "/");
 
 		return servletHandler;
 	}

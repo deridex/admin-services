@@ -1,4 +1,4 @@
-package cc.newmercy.contentservices.web.api.v1.admin;
+package cc.newmercy.contentservices.web.admin;
 
 import java.util.Objects;
 
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import cc.newmercy.contentservices.ServerStopper;
 
-@RequestMapping(value = "/v1/admin")
+@RequestMapping("/")
 public class AdminController {
 
 	private final ServerStopper serverStopper;
