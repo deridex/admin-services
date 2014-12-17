@@ -2,9 +2,6 @@ package cc.newmercy.contentservices.web.admin;
 
 import java.util.List;
 import java.util.Objects;
-import javax.validation.Valid;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 
 import cc.newmercy.contentservices.ServerStopper;
 import org.springframework.http.HttpStatus;
@@ -30,8 +27,8 @@ public class AdminController {
     @RequestMapping(value = "sermon-series", method = RequestMethod.GET)
     @ResponseBody
     public List<SermonSeriesInfo> list(
-            @RequestParam(defaultValue = "1") @Valid @Min(1) int page,
-            @RequestParam(defaultValue = "20") @Valid @Min(1) @Max(100) int pageSize) {
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "20") int pageSize) {
         return sermonSeriesRepo.list(page, pageSize);
     }
 
