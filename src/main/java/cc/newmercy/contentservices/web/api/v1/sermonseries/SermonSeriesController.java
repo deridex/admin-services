@@ -1,14 +1,10 @@
 package cc.newmercy.contentservices.web.api.v1.sermonseries;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import javax.validation.Valid;
 import javax.validation.Validator;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 
 import cc.newmercy.contentservices.web.time.ConsistentClock;
 import org.slf4j.Logger;
@@ -33,14 +29,6 @@ public class SermonSeriesController {
 		this.repo = Objects.requireNonNull(repo, "sermon series repository");
 		this.validator = Objects.requireNonNull(validator, "validator");
 		this.clock = Objects.requireNonNull(clock, "clock");
-	}
-
-	@RequestMapping(method = RequestMethod.GET)
-	@ResponseBody
-	public List<PersistentSermonSeries> list(
-			@RequestParam(defaultValue = "1") @Min(1) int page,
-			@RequestParam(defaultValue = "20") @Valid @Min(1) @Max(100) int pageSize) {
-		return repo.list(page, pageSize);
 	}
 
 	@RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
