@@ -26,7 +26,7 @@ public class Neo4jSermonSeriesRepository extends Neo4jRepository implements Serm
 
     private static final String CREATED_AT_PROPERTY = "createdAt";
 
-    private static final String SERMON_SERIES_LABEL = "SermonSeries";
+    public static final String SERMON_SERIES_LABEL = "SermonSeries";
 
     private static final String SKIP_PARAM = "skip";
 

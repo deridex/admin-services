@@ -15,8 +15,8 @@ angular.module('contentControllers', ['ngRoute', 'contentServices'])
 						})
 						.otherwise({ redirectTo: '/' })
 		}])
-		.controller('SermonSeriesListCtrl', ['$scope', 'contentApi', '$log', function($scope, contentApi, $log) {
-			$scope.sermonSeriesList = contentApi.all('sermon-series').getList().$object;
+		.controller('SermonSeriesListCtrl', ['$scope', 'adminApi', '$log', function($scope, adminApi, $log) {
+			$scope.sermonSeriesList = adminApi.all('sermon-series').getList().$object;
 		}])
 		.controller('SermonSeriesAddCtrl', ['$scope', 'contentApi', '$location', '$log', function($scope, contentApi, $location, $log) {
 			$scope.onSave = function() {

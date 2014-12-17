@@ -13,7 +13,7 @@ public class Neo4jSermonRepository extends Neo4jRepository implements SermonRepo
 
     private static final String SEQUENCE_NAME = "sermon";
 
-    private static final String LABEL = "Sermon";
+    public static final String SERMON_LABEL = "Sermon";
 
     private static final String NAME_PROPERTY= "name";
 
@@ -22,7 +22,7 @@ public class Neo4jSermonRepository extends Neo4jRepository implements SermonRepo
     private static final String PASSAGES_PROPERTY = "passages";
 
     private static final String CREATE_QUERY = Nodes.createNodeQuery(
-            LABEL,
+            SERMON_LABEL,
             true,
             NAME_PROPERTY,
             DESCRIPTION_PROPERTY,

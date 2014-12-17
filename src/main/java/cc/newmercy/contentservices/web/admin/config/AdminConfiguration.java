@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import cc.newmercy.contentservices.ServerStopper;
 import cc.newmercy.contentservices.web.admin.AdminController;
+import cc.newmercy.contentservices.web.admin.SermonSeriesInfoRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -21,33 +22,36 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 @EnableAspectJAutoProxy
 @EnableWebMvc
 public class AdminConfiguration implements WebBindingInitializer {
-	@Autowired
-	private ObjectMapper jsonMapper;
+    @Autowired
+    private ObjectMapper jsonMapper;
 
-	@Autowired
-	private LocalValidatorFactoryBean validator;
+    @Autowired
+    private LocalValidatorFactoryBean validator;
 
-	@Autowired
-	private ServerStopper serverStopper;
+    @Autowired
+    private SermonSeriesInfoRepository sermonSeriesRepo;
 
-	@Bean
-	public Object requestMappingHandlerAdapter() {
-		RequestMappingHandlerAdapter adapter = new RequestMappingHandlerAdapter();
+    @Autowired
+    private ServerStopper serverStopper;
 
-		MappingJackson2HttpMessageConverter jacksonConverter = new MappingJackson2HttpMessageConverter(jsonMapper);
+    @Bean
+    public Object requestMappingHandlerAdapter() {
+        RequestMappingHandlerAdapter adapter = new RequestMappingHandlerAdapter();
 
-		adapter.setMessageConverters(Arrays.asList(jacksonConverter));
+        MappingJackson2HttpMessageConverter jacksonConverter = new MappingJackson2HttpMessageConverter(jsonMapper);
 
-		return adapter;
-	}
+        adapter.setMessageConverters(Arrays.asList(jacksonConverter));
 
-	@Bean
-	public AdminController adminController() {
-		return new AdminController(serverStopper);
-	}
+        return adapter;
+    }
 
-	@Override
-	public void initBinder(WebDataBinder binder, WebRequest request) {
-		binder.setValidator(validator);
-	}
+    @Bean
+    public AdminController adminController() {
+        return new AdminController(sermonSeriesRepo, serverStopper);
+    }
+
+    @Override
+    public void initBinder(WebDataBinder binder, WebRequest request) {
+        binder.setValidator(validator);
+    }
 }
