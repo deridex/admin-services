@@ -72,8 +72,17 @@ public class ContentServices {
 		ContextHandler appResourceHandler = newClasspathResourceHandler("/app");
 		appResourceHandler.setContextPath("/app");
 
+		ContextHandler cssResourceHandler = newClasspathResourceHandler("/css");
+		cssResourceHandler.setContextPath("/css");
+
 		ContextHandlerCollection handlerCollection = new ContextHandlerCollection();
-		handlerCollection.setHandlers(new Handler[] { jsResourceHandler, appResourceHandler, apiServletHandler, adminServletHandler });
+		handlerCollection.setHandlers(new Handler[] {
+				jsResourceHandler,
+				appResourceHandler,
+				cssResourceHandler,
+				apiServletHandler,
+				adminServletHandler
+		});
 
 		server.setHandler(handlerCollection);
 

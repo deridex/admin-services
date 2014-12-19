@@ -9,11 +9,15 @@ angular.module('contentControllers', ['ngRoute', 'contentServices'])
 							controller: 'SermonSeriesAddCtrl',
 							templateUrl: '/app/sermon-series/add.html'
 						})
-						.when('/sermon-series/:id', {
-							controller: 'SermonSeriesEditCtrl',
-							templateUrl: '/app/sermon-series/edit.html'
-						})
-						.otherwise({ redirectTo: '/' })
+					.when('/sermon-series/:sermonSeriesId', {
+						controller: 'SermonSeriesEditCtrl',
+						templateUrl: '/app/sermon-series/edit.html'
+					})
+					.when('/sermon-series/:sermonSeriesId/sermon-add', {
+						controller: 'SermonAddCtrl',
+						templateUrl: '/app/sermon/add.html'
+					})
+					.otherwise({ redirectTo: '/' })
 		}])
 		.controller('SermonSeriesListCtrl', ['$scope', 'adminApi', '$log', function($scope, adminApi, $log) {
 			$scope.sermonSeriesList = adminApi.all('sermon-series').getList().$object;
@@ -36,5 +40,28 @@ angular.module('contentControllers', ['ngRoute', 'contentServices'])
 			};
 		}])
 		.controller('SermonSeriesEditCtrl', ['$scope', '$routeParams', '$log', 'contentApi', function($scope, $routeParams, $log, contentApi) {
-			$scope.sermonSeries = contentApi.one('sermon-series', $routeParams.id).get().$object;
+			$scope.sermonSeries = contentApi.one('sermon-series', $routeParams.sermonSeriesId).get().$object;
+		}])
+		.controller('SermonAddCtrl', ['$scope', '$routeParams', 'contentApi', '$location', '$log', function($scope, $routeParams, contentApi, $location, $log) {
+			$scope.onSave = function($event) {
+				var transientSermon = { name: $scope.name, description: $scope.description, passages: $scope.passages };
+
+				$log.info('adding sermon ' + JSON.stringify(transientSermon));
+
+				contentApi.one('sermon-series', $routeParams.sermonSeriesId).all('sermons').customPOST(transientSermon).then(
+					function(persistentSermon) {
+						$log.info('added sermon series ' + persistentSermon.id);
+
+						$location.path('/sermon-series/' + $routeParams.sermonSeriesId);
+					},
+					function(reason) {
+						$log.error('could not add sermon: ' + reason);
+					});
+			};
+
+			$scope.onCancel = function($event) {
+				$log.info("canceling add sermon");
+
+				$location.path('/sermon-series/' + $routeParams.sermonSeriesId);
+			}
 		}]);

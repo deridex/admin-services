@@ -6,6 +6,7 @@ import cc.newmercy.contentservices.aws.AssetStorage;
 import cc.newmercy.contentservices.web.api.v1.asset.AssetController;
 import cc.newmercy.contentservices.web.api.v1.asset.AssetRepository;
 import cc.newmercy.contentservices.web.api.v1.sermon.SermonController;
+import cc.newmercy.contentservices.web.api.v1.sermon.SermonRepository;
 import cc.newmercy.contentservices.web.api.v1.sermonseries.SermonSeriesController;
 import cc.newmercy.contentservices.web.api.v1.sermonseries.SermonSeriesRepository;
 import cc.newmercy.contentservices.web.time.ConsistentClock;
@@ -37,6 +38,9 @@ public class ApiConfiguration implements WebBindingInitializer {
 	private SermonSeriesRepository SermonSeriesRepository;
 
 	@Autowired
+	private SermonRepository sermonRepository;
+
+	@Autowired
 	private AssetRepository assetRepository;
 
 	@Autowired
@@ -66,8 +70,7 @@ public class ApiConfiguration implements WebBindingInitializer {
 
 	@Bean
 	public SermonController sermonController() {
-//		return new SermonController(sermonRepository);
-		return null;
+		return new SermonController(sermonRepository);
 	}
 
 	@Bean

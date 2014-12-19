@@ -1,8 +1,8 @@
 package cc.newmercy.contentservices.neo4j;
 
+import java.util.Objects;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.MediaType;
-import java.util.Objects;
 
 import cc.newmercy.contentservices.neo4j.json.TransactionResponse;
 import com.google.common.base.Preconditions;
@@ -41,15 +41,17 @@ public class Neo4jTransactionManager extends AbstractPlatformTransactionManager 
 			logger.warn("stale transaction '{}' detected", url.get());
 		}
 
+		logger.debug("beginning transaction");
+
 		url.set(null);
 	}
 
 	@Override
 	protected void doCommit(DefaultTransactionStatus status) throws TransactionException {
 		if (url.get() == null) {
-			logger.trace("cannot commit without transaction");
+			logger.warn("cannot commit without transaction");
 		} else {
-			logger.trace("committing {}", url.get());
+			logger.debug("committing {}", url.get());
 
 			try {
 				TransactionResponse response = client.target(url.get()).path("commit").request()
@@ -68,9 +70,9 @@ public class Neo4jTransactionManager extends AbstractPlatformTransactionManager 
 	@Override
 	protected void doRollback(DefaultTransactionStatus status) throws TransactionException {
 		if (url.get() == null) {
-			logger.trace("cannot rollback without transaction");
+			logger.warn("cannot rollback without transaction");
 		} else {
-			logger.trace("rolling back {}", url.get());
+			logger.debug("rolling back {}", url.get());
 
 			try {
 				TransactionResponse response = client.target(url.get()).request()

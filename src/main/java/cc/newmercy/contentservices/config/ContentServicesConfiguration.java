@@ -14,6 +14,7 @@ import cc.newmercy.contentservices.neo4j.jackson.JacksonEntityReader;
 import cc.newmercy.contentservices.web.admin.Neo4jSermonSeriesInfoRepository;
 import cc.newmercy.contentservices.web.api.v1.asset.AssetRepository;
 import cc.newmercy.contentservices.web.api.v1.asset.Neo4jAssetRepository;
+import cc.newmercy.contentservices.web.api.v1.sermon.Neo4jSermonRepository;
 import cc.newmercy.contentservices.web.api.v1.sermonseries.Neo4jSermonSeriesRepository;
 import cc.newmercy.contentservices.web.api.v1.sermonseries.SermonSeriesRepository;
 import cc.newmercy.contentservices.web.id.IdService;
@@ -41,7 +42,7 @@ public class ContentServicesConfiguration {
     }
 
     @Bean
-    public JacksonEntityReader jacksonEntityReader() {
+    public JacksonEntityReader entityReader() {
         return new JacksonEntityReader();
     }
 
@@ -50,7 +51,7 @@ public class ContentServicesConfiguration {
         ObjectMapper jsonMapper = new ObjectMapper();
 
         jsonMapper.registerModule(new JSR310Module());
-        jsonMapper.registerModule(new ContentServicesModule(jacksonEntityReader()));
+        jsonMapper.registerModule(new ContentServicesModule(entityReader()));
 
         jsonMapper.setDateFormat(new ISO8601DateFormat());
 
@@ -84,12 +85,12 @@ public class ContentServicesConfiguration {
 
     @Bean
     public SermonSeriesRepository sermonSeriesRepository() {
-        return new Neo4jSermonSeriesRepository(idService(), neo4j(), neo4jTransaction(), jsonMapper(), jacksonEntityReader());
+        return new Neo4jSermonSeriesRepository(idService(), neo4j(), neo4jTransaction(), jsonMapper(), entityReader());
     }
 
     @Bean
     public IdService idService() {
-        return new Neo4jIdService(neo4j(), jacksonEntityReader());
+        return new Neo4jIdService(neo4j(), entityReader());
     }
 
     @Bean
@@ -100,17 +101,22 @@ public class ContentServicesConfiguration {
     }
 
     @Bean
+    public Neo4jSermonRepository sermonRepository() {
+        return new Neo4jSermonRepository(neo4j(), neo4jTransaction(), idService(), jsonMapper(), entityReader());
+    }
+
+    @Bean
     public AssetStorage assetStorage() {
         return new S3AssetStorage("content.newmercy.cc", s3());
     }
 
     @Bean
     public AssetRepository assetRepository() {
-        return new Neo4jAssetRepository(idService(), neo4j(), neo4jTransaction(), jsonMapper(), jacksonEntityReader());
+        return new Neo4jAssetRepository(idService(), neo4j(), neo4jTransaction(), jsonMapper(), entityReader());
     }
 
     @Bean
     public Neo4jSermonSeriesInfoRepository sermonSeriesInfoRepo() {
-        return new Neo4jSermonSeriesInfoRepository(neo4j(), neo4jTransaction(), idService(), jsonMapper(), jacksonEntityReader());
+        return new Neo4jSermonSeriesInfoRepository(neo4j(), neo4jTransaction(), idService(), jsonMapper(), entityReader());
     }
 }

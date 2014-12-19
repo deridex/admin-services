@@ -3,7 +3,8 @@ angular.module('contentServices', ['restangular'])
 			return Restangular.withConfig(function(RestangularConfigurer) {
 				RestangularConfigurer.setBaseUrl('/api/v1');
 				RestangularConfigurer.setDefaultHeaders({
-					Accept: 'application/json'
+					Accept: 'application/json',
+					'Content-Type': 'application/json'
 				});
 			});
 		}])
@@ -11,7 +12,8 @@ angular.module('contentServices', ['restangular'])
 			return Restangular.withConfig(function(RestangularConfigurer) {
 				RestangularConfigurer.setBaseUrl('/admin');
 				RestangularConfigurer.setDefaultHeaders({
-					Accept: 'application/json'
+					Accept: 'application/json',
+					'Content-Type': 'application/json'
 				});
 			});
 		}]);
