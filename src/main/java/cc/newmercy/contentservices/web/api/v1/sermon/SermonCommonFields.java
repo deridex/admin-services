@@ -1,10 +1,10 @@
 package cc.newmercy.contentservices.web.api.v1.sermon;
 
+import java.util.List;
+
 import cc.newmercy.contentservices.validation.collection.NotEmptyString;
 import cc.newmercy.contentservices.validation.collection.SupplementalCollectionConstraints;
 import org.hibernate.validator.constraints.NotEmpty;
-
-import java.util.List;
 
 public abstract class SermonCommonFields {
     @NotEmpty

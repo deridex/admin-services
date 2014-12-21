@@ -35,7 +35,7 @@ public class ApiConfiguration implements WebBindingInitializer {
 	private LocalValidatorFactoryBean validator;
 
 	@Autowired
-	private SermonSeriesRepository SermonSeriesRepository;
+	private SermonSeriesRepository sermonSeriesRepository;
 
 	@Autowired
 	private SermonRepository sermonRepository;
@@ -65,12 +65,12 @@ public class ApiConfiguration implements WebBindingInitializer {
 
 	@Bean
 	public SermonSeriesController sermonSeriesController() {
-		return new SermonSeriesController(SermonSeriesRepository, validator, consistentClock());
+		return new SermonSeriesController(sermonSeriesRepository, validator, consistentClock());
 	}
 
 	@Bean
 	public SermonController sermonController() {
-		return new SermonController(sermonRepository);
+		return new SermonController(consistentClock(), sermonRepository);
 	}
 
 	@Bean

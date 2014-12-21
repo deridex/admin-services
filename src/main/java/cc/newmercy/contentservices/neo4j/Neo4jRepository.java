@@ -132,6 +132,10 @@ public class Neo4jRepository {
                         .toArray(new JavaType[types.length]));
     }
 
+    protected final EntityReader getEntityReader() {
+        return entityReader;
+    }
+
     protected class Query {
 
         private final String cypher;
@@ -166,11 +170,18 @@ public class Neo4jRepository {
                 return set(parameter, (Object) null);
             }
 
+            String json;
+
             try {
-                return set(parameter, (Object) jsonMapper.writeValueAsString(argument));
+                json = jsonMapper.writeValueAsString(argument);
             } catch (JsonProcessingException e) {
                 throw new IllegalArgumentException(e);
             }
+
+            /*
+             * Throw away the quotes.
+             */
+            return set(parameter, json.substring(1, json.length() - 1));
         }
 
         public Query setStrings(String parameter, List<String> argument) {

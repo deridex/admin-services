@@ -1,7 +1,8 @@
 package cc.newmercy.contentservices.web.api.v1.sermon;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.util.Objects;
 
+import cc.newmercy.contentservices.web.time.ConsistentClock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -14,10 +15,13 @@ public class SermonController {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
+    private final ConsistentClock clock;
+
     private final SermonRepository sermonRepository;
 
-    public SermonController(SermonRepository sermonRepository) {
-        this.sermonRepository = checkNotNull(sermonRepository, "sermon repository");
+    public SermonController(ConsistentClock clock, SermonRepository sermonRepository) {
+        this.clock = Objects.requireNonNull(clock, "clock");
+        this.sermonRepository = Objects.requireNonNull(sermonRepository, "sermon repository");
     }
 
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -25,7 +29,7 @@ public class SermonController {
     public PersistentSermon addSermon(@PathVariable("sermonSeriesId") String sermonSeriesId, @RequestBody TransientSermon sermon) {
         logger.debug("adding {} sermon {}", sermonSeriesId, sermon);
 
-        PersistentSermon persistentSermon = sermonRepository.save(sermonSeriesId, sermon);
+        PersistentSermon persistentSermon = sermonRepository.save(sermonSeriesId, sermon, clock.now());
 
         return persistentSermon;
     }
