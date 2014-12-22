@@ -1,23 +1,25 @@
-<section>
-<form name="add-sermon-series" novalidate>
-<div>
-	<label>Name</label>
-	<input name="name"
-			type="text"
-			placeholder="Sermon Series Name"
-			data-ng-model="name"
-			required>
-</div>
-<div>
-	<label>Description</label><textarea name="description" required data-ng-model="description"></textarea>
-</div>
-<div>
-	<label>Image Url</label>
-	<input name="imageUrl" type="url" required data-ng-model="imageUrl">
-</div>
-<div>
-</div>
+<form name="add-sermon-series" class="pure-form pure-form-aligned" novalidate>
+	<fieldset>
+		<legend>Add Sermon Series</legend>
+		<div class="pure-control-group">
+			<label>Name</label>
+			<input name="name"
+					type="text"
+					placeholder="Sermon Series Name"
+					data-ng-model="name"
+					required>
+		</div>
+		<div class="pure-control-group">
+			<label>Description</label>
+			<textarea name="description" required data-ng-model="description"></textarea>
+		</div>
+		<div class="pure-control-group">
+			<label>Image Url</label>
+			<input name="imageUrl" type="url" required data-ng-model="imageUrl">
+		</div>
+		<div class="pure-controls">
+			<button class="pure-button pure-button-primary" data-ng-click="onSave($event)">Save</button>
+			<button class="pure-button" data-ng-click="onCancel($event)">Cancel</button>
+		</div>
+	</fieldset>
 </form>
-<div>Cancel</div>
-<div data-ng-click="onSave($event)">Save</div>
-</section>

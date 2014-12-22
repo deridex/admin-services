@@ -32,14 +32,20 @@ angular.module('contentControllers', ['ngRoute', 'contentServices'])
 						function(persistentSermonSeries) {
 							$log.info('added sermon series ' + persistentSermonSeries.id);
 
-							$location.path('/');
+							$location.path('/sermon-series/' + persistentSermonSeries.id);
 						},
 						function(reason) {
 							$log.error('could not add sermon series: ' + reason);
 						});
 			};
+
+			$scope.onCancel = function($event) {
+				$log.info('discarding sermon series');
+
+				$location.path('/');
+			};
 		}])
-		.controller('SermonSeriesEditCtrl', ['$scope', '$routeParams', '$log', 'contentApi', '$route', function($scope, $routeParams, $log, contentApi, $route) {
+		.controller('SermonSeriesEditCtrl', ['$scope', '$routeParams', '$log', 'contentApi', '$route', '$location', function($scope, $routeParams, $log, contentApi, $route, $location) {
 			var sermonSeriesId = $routeParams.sermonSeriesId;
 
 			var sermonSeries = contentApi.one('sermon-series', sermonSeriesId).get().$object;
@@ -65,7 +71,7 @@ angular.module('contentControllers', ['ngRoute', 'contentServices'])
 			$scope.onCancel = function($event) {
 				$log.info('discarding sermon series changes');
 
-				$route.reload();
+				$location.path('/');
 			};
 		}])
 		.controller('SermonAddCtrl', ['$scope', '$routeParams', 'contentApi', '$location', '$log', function($scope, $routeParams, contentApi, $location, $log) {
