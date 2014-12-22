@@ -7,5 +7,5 @@ public interface SermonSeriesRepository {
 
 	PersistentSermonSeries get(String id);
 
-	PersistentSermonSeries update(String id, EditedSermonSeries editedSeries);
+	PersistentSermonSeries update(String id, Integer version, EditedSermonSeries editedSeries);
 }

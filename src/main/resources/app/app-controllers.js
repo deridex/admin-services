@@ -39,8 +39,34 @@ angular.module('contentControllers', ['ngRoute', 'contentServices'])
 						});
 			};
 		}])
-		.controller('SermonSeriesEditCtrl', ['$scope', '$routeParams', '$log', 'contentApi', function($scope, $routeParams, $log, contentApi) {
-			$scope.sermonSeries = contentApi.one('sermon-series', $routeParams.sermonSeriesId).get().$object;
+		.controller('SermonSeriesEditCtrl', ['$scope', '$routeParams', '$log', 'contentApi', '$route', function($scope, $routeParams, $log, contentApi, $route) {
+			var sermonSeriesId = $routeParams.sermonSeriesId;
+
+			var sermonSeries = contentApi.one('sermon-series', sermonSeriesId).get().$object;
+
+			$scope.sermonSeries = sermonSeries;
+
+			$scope.onSave = function($event) {
+				var editedSermonSeries = { name: sermonSeries.name, description: sermonSeries.description, imageUrl: sermonSeries.imageUrl };
+
+				$log.info('saving sermon series changes ' + JSON.stringify(editedSermonSeries));
+
+				contentApi.all('sermon-series').customPUT(editedSermonSeries, sermonSeries.id, { v: sermonSeries.v }).then(
+					function(persistentSermonSeries) {
+						$log.info('saved sermon series ' + sermonSeriesId);
+
+						$route.reload();
+					},
+					function(reason) {
+						$log.error('could not add sermon series: ' + reason);
+					});
+			};
+
+			$scope.onCancel = function($event) {
+				$log.info('discarding sermon series changes');
+
+				$route.reload();
+			};
 		}])
 		.controller('SermonAddCtrl', ['$scope', '$routeParams', 'contentApi', '$location', '$log', function($scope, $routeParams, contentApi, $location, $log) {
 			$scope.onSave = function($event) {

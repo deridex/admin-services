@@ -6,11 +6,13 @@ public final class Nodes {
 
 	public static final String ID_PROPERTY = "id";
 
+	public static final String VERSION_PROPERTY = "v";
+
 	public static String createNodeQuery(String label, boolean hasId, String... properties) {
 		StringBuilder query = new StringBuilder();
 
 		try (Formatter formatter = new Formatter(query)) {
-			formatter.format("create (n:%s { %s: { %2$s }", label, ID_PROPERTY);
+			formatter.format("create (n:%s { %s: { %2$s }, %s: 1", label, ID_PROPERTY, VERSION_PROPERTY);
 
 			for (String property : properties) {
 				formatter.format(", %s: { %1$s }", property);
@@ -32,14 +34,18 @@ public final class Nodes {
 		return query.toString();
 	}
 
-	public static String updateNodeQuery(String label, String... properties) {
+	public static String updateNodeQuery(String label, String property, String... otherProperties) {
 		StringBuilder query = new StringBuilder();
 
 		try (Formatter formatter = new Formatter(query)) {
-			formatter.format("match (n:%s) where n.%s = { %2$s } set n.%s = { %3$s }", label, ID_PROPERTY, properties[0]);
+			formatter.format("match (n:%s) where n.%s = { %2$s } and n.%s = { %3$s } set n.%3$s = n.%3$s + 1, n.%s = { %4$s }",
+					label,
+					ID_PROPERTY,
+					VERSION_PROPERTY,
+					property);
 
-			for (int i = 1; i < properties.length; i++) {
-				formatter.format(", n.%s = { %1$s }", properties[i]);
+			for (String otherProperty : otherProperties) {
+				formatter.format(", n.%s = { %1$s }", otherProperty);
 			}
 		}
 

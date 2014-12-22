@@ -7,6 +7,7 @@ import cc.newmercy.contentservices.neo4j.Neo4jRepository;
 import cc.newmercy.contentservices.neo4j.Neo4jTransaction;
 import cc.newmercy.contentservices.neo4j.Nodes;
 import cc.newmercy.contentservices.neo4j.jackson.EntityReader;
+import cc.newmercy.contentservices.web.exceptions.BadRequestException;
 import cc.newmercy.contentservices.web.id.IdService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -65,12 +66,19 @@ public class Neo4jSermonSeriesRepository extends Neo4jRepository implements Serm
     }
 
     @Override
-    public PersistentSermonSeries update(String id, EditedSermonSeries editedSeries) {
-        return postForOne(query(UPDATE_QUERY, PersistentSermonSeries.class)
+    public PersistentSermonSeries update(String id, Integer version, EditedSermonSeries editedSeries) {
+        PersistentSermonSeries sermonSeries = postForOne(query(UPDATE_QUERY, PersistentSermonSeries.class)
                 .set(Nodes.ID_PROPERTY, id)
+                .set(Nodes.VERSION_PROPERTY, version)
                 .set(NAME_PROPERTY, editedSeries.getName())
                 .set(DESCRIPTION_PROPERTY, editedSeries.getDescription())
                 .set(IMAGE_URL_PROPERTY, editedSeries.getImageUrl()));
+
+        if (sermonSeries == null) {
+            throw new BadRequestException("cannot update sermon series " + id + " version " + version);
+        }
+
+        return sermonSeries;
     }
 }
 

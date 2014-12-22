@@ -3,10 +3,13 @@ package cc.newmercy.contentservices.web.api.v1.sermonseries;
 import java.time.Instant;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class PersistentSermonSeries extends SermonSeriesCommonFields {
 
     private String id;
 
+    @JsonProperty("v")
     private int version;
 
     private Instant createdAt;

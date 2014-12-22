@@ -55,7 +55,10 @@ public class SermonSeriesController {
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public PersistentSermonSeries update(@PathVariable("id") String id, @RequestBody EditedSermonSeries editedSeries) {
-		return repo.update(id, editedSeries);
+	public PersistentSermonSeries update(
+			@PathVariable("id") String id,
+			@RequestParam("v") Integer version,
+			@RequestBody EditedSermonSeries editedSeries) {
+		return repo.update(id, version, editedSeries);
 	}
 }
