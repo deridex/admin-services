@@ -1,7 +1,8 @@
+<h1>Edit Sermon Series</h1>
 <div>
+	<h2>Sermon Series Details</h2>
 	<form name="sermon-series" class="pure-form pure-form-aligned" novalidate>
 		<fieldset>
-			<legend>Edit Sermon Series</legend>
 			<div class="pure-control-group">
 				<label>Id</label>
 				<span>{{ sermonSeries.id }}</span>
@@ -24,4 +25,57 @@
 			</div>
 		</fieldset>
 	</form>
+</div>
+<div>
+	<h2>Sermons</h2>
+	<div data-ng-switch data-on="sermonsView">
+		<div data-ng-switch-when="list">
+			<div>
+				<button class="pure-button pure-button-primary" data-ng-click="onAddSermon($event)">Add Sermon</button>
+			</div>
+			<table class="pure-table" data-ng-if="sermons.length > 0">
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>Name</th>
+						<th>Date</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr data-ng-repeat="sermon in sermons">
+						<td>{{ $index + 1 }} </td>
+						<td>{{ sermon.name }}</td>
+						<td>{{ sermon.date }}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div data-ng-switch-when="add">
+			<h3>Add Sermon</h3>
+			<form name="sermon" class="pure-form pure-form-aligned" novalidate>
+				<fieldset>
+					<div class="pure-control-group">
+						<label>Name</label>
+						<input name="name"
+							   type="text"
+							   placeholder="Sermon Series Name"
+							   data-ng-model="name"
+							   required>
+					</div>
+					<div class="pure-control-group">
+						<label>Description</label>
+						<textarea name="description" placeholder="Description" required data-ng-model="description"></textarea>
+					</div>
+
+					<div class="pure-controls">
+						<button class="pure-button pure-button-primary" data-ng-click="onAddSermonSave($event)">Save</button>
+						<button class="pure-button" data-ng-click="onCancelSermon($event)">Cancel</button>
+					</div>
+				</fieldset>
+			</form>
+		</div>
+		<div data-ng-switch-when="edit">
+			edit
+		</div>
+	</div>
 </div>

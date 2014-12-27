@@ -73,6 +73,37 @@ angular.module('contentControllers', ['ngRoute', 'contentServices'])
 
 				$location.path('/');
 			};
+
+			$scope.sermonsView = 'list';
+			$scope.sermons = [];
+
+			$scope.onAddSermon = function($event) {
+				$log.info('showing add sermon dialog');
+
+				$scope.sermonsView = 'add';
+			}
+
+			$scope.onAddSermonSave = function($event) {
+				var transientSermon = { name: $scope.name, description: $scope.description, passages: $scope.passages };
+
+				$log.info('adding sermon ' + JSON.stringify(transientSermon));
+
+				contentApi.one('sermon-series', $routeParams.sermonSeriesId).all('sermons').customPOST(transientSermon).then(
+					function(persistentSermon) {
+						$log.info('added sermon series ' + persistentSermon.id);
+
+						$location.path('/sermon-series/' + $routeParams.sermonSeriesId);
+					},
+					function(reason) {
+						$log.error('could not add sermon: ' + reason);
+					});
+			};
+
+			$scope.onCancelSermon = function($event) {
+				$log.info('returning to sermon list');
+
+				$scope.sermonsView = 'list';
+			}
 		}])
 		.controller('SermonAddCtrl', ['$scope', '$routeParams', 'contentApi', '$location', '$log', function($scope, $routeParams, contentApi, $location, $log) {
 			$scope.onSave = function($event) {
