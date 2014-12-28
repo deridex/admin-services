@@ -1,17 +1,20 @@
 package cc.newmercy.contentservices.web.id;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 import cc.newmercy.contentservices.neo4j.jackson.EntityReader;
-import cc.newmercy.contentservices.neo4j.json.*;
+import cc.newmercy.contentservices.neo4j.json.Row;
+import cc.newmercy.contentservices.neo4j.json.Statement;
+import cc.newmercy.contentservices.neo4j.json.TransactionRequest;
+import cc.newmercy.contentservices.neo4j.json.TransactionResponse;
 import cc.newmercy.contentservices.repository.RepositoryException;
 import com.google.common.base.Preconditions;
 import org.slf4j.Logger;
@@ -104,7 +107,7 @@ public class Neo4jIdService implements IdService, AutoCloseable {
 				id = range[NEXT_IDX]++;
 			}
 
-			return Base62.INSTANCE.encode(id);
+			return Long.toString(id, 36);
 		}
 
 		private long[] reset() {
