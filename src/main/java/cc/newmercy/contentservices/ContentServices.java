@@ -64,13 +64,13 @@ public class ContentServices {
 		apiServletHandler.setContextPath("/api");
 
 		ContextHandler adminServletHandler = newServletHandler(rootInjector, AdminConfiguration.class);
-		adminServletHandler.setContextPath("/admin");
+		adminServletHandler.setContextPath("/admin-api");
 
 		ContextHandler jsResourceHandler = newClasspathResourceHandler("/js");
 		jsResourceHandler.setContextPath("/js");
 
-		ContextHandler appResourceHandler = newClasspathResourceHandler("/app");
-		appResourceHandler.setContextPath("/app");
+		ContextHandler appResourceHandler = newClasspathResourceHandler("/admin");
+		appResourceHandler.setContextPath("/");
 
 		ContextHandler cssResourceHandler = newClasspathResourceHandler("/css");
 		cssResourceHandler.setContextPath("/css");

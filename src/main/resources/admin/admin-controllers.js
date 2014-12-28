@@ -3,19 +3,19 @@ angular.module('nmcc.ContentControllers', ['ngRoute', 'nmcc.ContentServices'])
 				$routeProvider
 						.when('/', {
 							controller: 'SermonSeriesListCtrl',
-							templateUrl: '/app/sermon-series/list.html'
+							templateUrl: '/sermon-series/list.html'
 						})
 						.when('/sermon-series-add', {
 							controller: 'SermonSeriesAddCtrl',
-							templateUrl: '/app/sermon-series/add.html'
+							templateUrl: '/sermon-series/add.html'
 						})
 					.when('/sermon-series/:sermonSeriesId', {
 						controller: 'SermonSeriesEditCtrl',
-						templateUrl: '/app/sermon-series/edit.html'
+						templateUrl: '/sermon-series/edit.html'
 					})
 					.when('/sermon-series/:sermonSeriesId/sermon-add', {
 						controller: 'SermonAddCtrl',
-						templateUrl: '/app/sermon/add.html'
+						templateUrl: '/sermon/add.html'
 					})
 					.otherwise({ redirectTo: '/' })
 		}])

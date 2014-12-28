@@ -10,7 +10,7 @@ angular.module('nmcc.ContentServices', ['restangular'])
 		}])
 		.factory('adminApi', ['Restangular', function(Restangular) {
 			return Restangular.withConfig(function(RestangularConfigurer) {
-				RestangularConfigurer.setBaseUrl('/admin');
+				RestangularConfigurer.setBaseUrl('/admin-api');
 				RestangularConfigurer.setDefaultHeaders({
 					Accept: 'application/json',
 					'Content-Type': 'application/json'
