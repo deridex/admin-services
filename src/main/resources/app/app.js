@@ -1,1 +1,1 @@
-angular.module('contentApp', ['contentControllers']);
+angular.module('nmcc.ContentApp', ['nmcc.ContentControllers']);

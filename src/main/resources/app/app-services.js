@@ -1,4 +1,4 @@
-angular.module('contentServices', ['restangular'])
+angular.module('nmcc.ContentServices', ['restangular'])
 		.factory('contentApi', ['Restangular', function(Restangular) {
 			return Restangular.withConfig(function(RestangularConfigurer) {
 				RestangularConfigurer.setBaseUrl('/api/v1');

@@ -1,4 +1,4 @@
-angular.module('contentControllers', ['ngRoute', 'contentServices'])
+angular.module('nmcc.ContentControllers', ['ngRoute', 'nmcc.ContentServices'])
 		.config(['$routeProvider', function($routeProvider) {
 				$routeProvider
 						.when('/', {
