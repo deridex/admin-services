@@ -1,1 +1,51 @@
-<nmcc-sermon-series-form sermon-series="sermonSeries" on-save="saveEdits($event)" on-cancel="reload($event)" />
+<div ng-switch="mode">
+    <div ng-switch-when="sermons-list">
+        <div>
+            <h1>Sermon Series</h1>
+            <nmcc-sermon-series-form sermon-series="sermonSeries" on-save="handleSaveEdits($event)" on-cancel="reload($event)" />
+        </div>
+        <div>
+            <h1>Sermons</h1>
+            <table>
+                <thead>
+                <tr>
+                    <td>Id</td>
+                    <td>Name</td>
+                    <td>By</td>
+                    <td>Date</td>
+                    <td>Created At</td>
+                    <td>Operations</td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="sermon in sermons">
+                    <td>{{ sermon.id }}</td>
+                    <td>{{ sermon.name }}</td>
+                    <td>{{ sermon.by }}</td>
+                    <td>{{ sermon.date }}</td>
+                    <td>{{ sermon.createdAt }}</td>
+                    <td>
+                        <button class="pure-button" ng-click="handleEditSermon($event, $index)">Edit</button>
+                        <button class="pure-button" ng-click="handleDeleteSermon($event, $index)">Delete</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div>
+                <button class="pure-button" ng-click="handleAddSermon($event)">Add Sermon</button>
+            </div>
+        </div>
+    </div>
+    <div ng-switch-when="sermon-add">
+        <div>
+            <h1>Sermon</h1>
+            <nmcc-sermon-form sermon="addSermon()" on-save="handleSaveNewSermon($event)" on-cancel="handleCancelSermon($event)" />
+        </div>
+    </div>
+    <div ng-switch-when="sermon-edit">
+        <div>
+            <h1>Sermon</h1>
+            <nmcc-sermon-form sermon="sermons[editIdx]" on-save="handleSaveEditSermon($event)" on-cancel="handleCancelSermon($event)" />
+        </div>
+    </div>
+</div>

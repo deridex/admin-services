@@ -20,4 +20,15 @@ angular.module('nmcc.SermonSeries', ['ngRoute', 'nmcc.SermonSeriesControllers'])
                 onCancel: '&'
             }
         };
+    }])
+    .directive('nmccSermonForm', [function() {
+        return {
+            restrict: 'E',
+            templateUrl: 'sermon-form.html',
+            scope: {
+                sermon: '=',
+                onSave: '&',
+                onCancel: '&'
+            }
+        };
     }]);

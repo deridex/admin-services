@@ -38,9 +38,34 @@ angular.module('nmcc.SermonSeriesControllers', ['ngRoute', 'nmcc.ContentServices
 
 		var sermonSeries = contentApi.one('sermon-series', sermonSeriesId).get().$object;
 
+		var listSermonsMode = 'sermons-list';
+		var editSermonMode = 'sermon-edit';
+		var addSermonMode = 'sermon-add'
+
+		$scope.mode = listSermonsMode;
+
 		$scope.sermonSeries = sermonSeries;
 
-		$scope.saveEdits = function($event) {
+		$scope.editIdx = 0;
+
+		$scope.sermons = [{
+			id: 'abc',
+			name: 'sermon name',
+			description: 'sermon description',
+			by: 'PK',
+			date: '2014-12-28',
+			createdAt: '2014-12-28T12:34:56Z'
+		},
+		{
+			id: 'def',
+			name: 'sermon name 2',
+			description: 'sermon description 2',
+			by: 'PH',
+			date: '2014-12-29',
+			createdAt: '2014-12-29T12:34:56Z'
+		}];
+
+		$scope.handleSaveEdits = function($event) {
 			var editedSermonSeries = { name: sermonSeries.name, description: sermonSeries.description, imageUrl: sermonSeries.imageUrl };
 
 			$log.info('saving sermon series changes ' + JSON.stringify(editedSermonSeries));
@@ -54,5 +79,42 @@ angular.module('nmcc.SermonSeriesControllers', ['ngRoute', 'nmcc.ContentServices
 				function(reason) {
 					$log.error('could not add sermon series: ' + reason);
 				});
+		};
+
+		$scope.handleEditSermon = function($event, $index) {
+			$scope.editIdx = $index;
+			$scope.mode = editSermonMode;
+
+			$log.info('editing sermon ' + $index + ' '  + $scope.sermons[$index]);
+		};
+
+		$scope.handleDeleteSermon = function($event, $index) {
+			$log.info('deleting sermon ' + $index + ' ' + $scope.sermons[$index].id);
+		};
+
+		$scope.handleAddSermon = function() {
+			$log.info('adding sermon');
+
+			$scope.editIdx = $scope.sermons.length;
+			$scope.sermons.push({});
+			$scope.mode = addSermonMode;
+		};
+
+		$scope.handleSaveNewSermon = function($event) {
+			$log.info('saving new sermon');
+
+			$route.reload();
+		};
+
+		$scope.handleSaveEditSermon = function($event) {
+			$log.info('saving sermon edits');
+
+			$route.reload();
+		};
+
+		$scope.handleCancelSermon = function($event) {
+			$log.info('canceling sermon edits');
+
+			$route.reload();
 		};
 	}]);
