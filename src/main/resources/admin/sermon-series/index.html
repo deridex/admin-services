@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="nmcc.SermonSeries" ng-controller="SermonSeriesCtrl">
+<html lang="en" ng-app="nmcc.SermonSeries">
 <head>
-<title ng-bind="sermonSeries.name ? sermonSeries.name : 'Sermon Series'"></title>
+<title>Sermon Series</title>
 <meta charset="utf-8">
 <link rel="stylesheet" href="/css/vendor/pure-0.5.0/pure.css">
 </head>
 <body>
-<div ng-view></div>
+<div ng-controller="SermonSeriesCtrl" ng-view></div>
 <script src="/js/vendor/angularjs-1.3.5/angular.js"></script>
 <script src="/js/vendor/angularjs-1.3.5/angular-route.js"></script>
 <script src="/js/vendor/lodash-2.4.1/lodash.min.js"></script>

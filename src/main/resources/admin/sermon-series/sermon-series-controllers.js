@@ -3,7 +3,7 @@ angular.module('nmcc.SermonSeriesControllers', ['ngRoute', 'nmcc.ContentServices
 		$log.info('building sermon series control');
 
 		$scope.reload = function($event) {
-			$log.info('abandoning data and reloading');
+			$log.info('abandoning data and sermon series list');
 
 			$location.path('/');
 		};
@@ -15,7 +15,7 @@ angular.module('nmcc.SermonSeriesControllers', ['ngRoute', 'nmcc.ContentServices
 
 		$scope.sermonSeries = sermonSeries;
 
-		$scope.saveNew = function($event) {
+		$scope.handleSave = function($event) {
 			var transientSermonSeries = { name: sermonSeries.name, description: sermonSeries.description, imageUrl: sermonSeries.imageUrl };
 
 			$log.info('adding sermon series ' + JSON.stringify(transientSermonSeries));
