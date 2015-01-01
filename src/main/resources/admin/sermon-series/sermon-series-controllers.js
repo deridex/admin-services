@@ -34,9 +34,12 @@ angular.module('nmcc.SermonSeriesControllers', ['ngRoute', 'nmcc.ContentServices
 	.controller('SermonSeriesEditCtrl', ['$scope', '$log', '$routeParams', 'contentApi', '$route', function($scope, $log, $routeParams, contentApi, $route) {
 		var sermonSeriesId = $routeParams.sermonSeriesId;
 
-		$log.info('fetching sermon series ' + sermonSeriesId);
+		$scope.sermonSeriesEntity = contentApi.one('sermon-series', sermonSeriesId);
+		$scope.sermonSeriesEntity.get().then(function(data) {
+			$log.info('fetched sermon series ' + JSON.stringify(data));
 
-		var sermonSeries = contentApi.one('sermon-series', sermonSeriesId).get().$object;
+			$scope.sermonSeries = data;
+		});
 
 		var listSermonsMode = 'sermons-list';
 		var editSermonMode = 'sermon-edit';
@@ -44,41 +47,30 @@ angular.module('nmcc.SermonSeriesControllers', ['ngRoute', 'nmcc.ContentServices
 
 		$scope.mode = listSermonsMode;
 
-		$scope.sermonSeries = sermonSeries;
-
 		$scope.editIdx = 0;
 
-		$scope.sermons = [{
-			id: 'abc',
-			name: 'sermon name',
-			description: 'sermon description',
-			by: 'PK',
-			date: '2014-12-28',
-			createdAt: '2014-12-28T12:34:56Z'
-		},
-		{
-			id: 'def',
-			name: 'sermon name 2',
-			description: 'sermon description 2',
-			by: 'PH',
-			date: '2014-12-29',
-			createdAt: '2014-12-29T12:34:56Z'
-		}];
+		$scope.sermonsEntity = contentApi.one('sermon-series', sermonSeriesId).getList('sermons');
+		$scope.sermonsEntity.get().then(function(data) {
+			$log.info('fetched sermons ' + JSON.stringify(data));
+
+			$scope.sermons = data;
+		});
 
 		$scope.handleSaveEdits = function($event) {
-			var editedSermonSeries = { name: sermonSeries.name, description: sermonSeries.description, imageUrl: sermonSeries.imageUrl };
+			$log.info('saving sermon series edits ' + JSON.stringify($scope.sermonSeries));
 
-			$log.info('saving sermon series changes ' + JSON.stringify(editedSermonSeries));
-
-			contentApi.all('sermon-series').customPUT(editedSermonSeries, sermonSeries.id, { v: sermonSeries.v }).then(
-				function(persistentSermonSeries) {
-					$log.info('saved sermon series ' + sermonSeriesId);
+			$scope.sermonSeries.put({ v: $scope.sermonSeries.v }).then(
+				function() {
+					$log.info('saved sermon edits');
 
 					$route.reload();
 				},
-				function(reason) {
-					$log.error('could not add sermon series: ' + reason);
-				});
+				function() {
+					$log.info('failed to save sermon edits');
+
+					$route.reload();
+				}
+			);
 		};
 
 		$scope.handleEditSermon = function($event, $index) {
@@ -100,13 +92,13 @@ angular.module('nmcc.SermonSeriesControllers', ['ngRoute', 'nmcc.ContentServices
 			$scope.mode = addSermonMode;
 		};
 
-		$scope.handleSaveNewSermon = function($event) {
+		$scope.handleSaveTransientSermon = function($event) {
 			$log.info('saving new sermon');
 
 			$route.reload();
 		};
 
-		$scope.handleSaveEditSermon = function($event) {
+		$scope.handleSaveEditedSermon = function($event) {
 			$log.info('saving sermon edits');
 
 			$route.reload();

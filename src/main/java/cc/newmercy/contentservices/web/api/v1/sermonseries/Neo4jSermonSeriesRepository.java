@@ -66,7 +66,7 @@ public class Neo4jSermonSeriesRepository extends Neo4jRepository implements Serm
     }
 
     @Override
-    public PersistentSermonSeries update(String id, Integer version, EditedSermonSeries editedSeries) {
+    public PersistentSermonSeries update(String id, Integer version, PersistentSermonSeries editedSeries) {
         PersistentSermonSeries sermonSeries = postForOne(query(UPDATE_QUERY, PersistentSermonSeries.class)
                 .set(Nodes.ID_PROPERTY, id)
                 .set(Nodes.VERSION_PROPERTY, version)
@@ -81,4 +81,3 @@ public class Neo4jSermonSeriesRepository extends Neo4jRepository implements Serm
         return sermonSeries;
     }
 }
-

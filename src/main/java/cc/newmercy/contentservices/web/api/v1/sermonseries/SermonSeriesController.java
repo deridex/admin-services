@@ -58,7 +58,7 @@ public class SermonSeriesController {
 	public PersistentSermonSeries update(
 			@PathVariable("id") String id,
 			@RequestParam("v") Integer version,
-			@RequestBody EditedSermonSeries editedSeries) {
+			@RequestBody PersistentSermonSeries editedSeries) {
 		return repo.update(id, version, editedSeries);
 	}
 }

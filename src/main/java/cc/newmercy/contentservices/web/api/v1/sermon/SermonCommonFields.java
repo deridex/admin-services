@@ -1,6 +1,9 @@
 package cc.newmercy.contentservices.web.api.v1.sermon;
 
+import java.time.LocalDate;
 import java.util.List;
+
+import javax.validation.constraints.NotNull;
 
 import cc.newmercy.contentservices.validation.collection.NotEmptyString;
 import cc.newmercy.contentservices.validation.collection.SupplementalCollectionConstraints;
@@ -9,6 +12,12 @@ import org.hibernate.validator.constraints.NotEmpty;
 public abstract class SermonCommonFields {
     @NotEmpty
     private String name;
+
+    @NotNull
+    private LocalDate date;
+
+    @NotEmpty
+    private String by;
 
     @NotEmpty
     private String description;
@@ -39,5 +48,21 @@ public abstract class SermonCommonFields {
 
     public void setPassages(List<String> passages) {
         this.passages = passages;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public String getBy() {
+        return by;
+    }
+
+    public void setBy(String by) {
+        this.by = by;
     }
 }

@@ -8,6 +8,18 @@ public final class Relationships {
 
     public static final String END_ID_PARAMETER = "endId";
 
+    public static String listRelationsQuery(
+            String startLabel,
+            String relationshipLabel,
+            String endLabel) {
+        return String.format("match (:%s { %s: { %s } })-[:%s]->(n:%s) return n",
+                startLabel,
+                Nodes.ID_PROPERTY,
+                START_ID_PARAMETER,
+                relationshipLabel,
+                endLabel);
+    }
+
     public static String createRelationshipQuery(
             String startLabel,
             String endLabel,
@@ -16,7 +28,7 @@ public final class Relationships {
         StringBuilder query = new StringBuilder();
 
         try (Formatter formatter = new Formatter(query)) {
-            formatter.format("match (a:%s { %s: { %s }}), (b:%s { %s: { %s }}) create unique (a)-[r:%s",
+            formatter.format("match (a:%s { %s: { %s } }), (b:%s { %s: { %s } }) create unique (a)-[r:%s",
                     startLabel,
                     Nodes.ID_PROPERTY,
                     START_ID_PARAMETER,
@@ -32,7 +44,7 @@ public final class Relationships {
                     formatter.format(", %s: { %1$s }", properties[i]);
                 }
 
-                formatter.format("%s", "}");
+                formatter.format("%s", " }");
             }
 
             formatter.format("%s", "]->(b)");

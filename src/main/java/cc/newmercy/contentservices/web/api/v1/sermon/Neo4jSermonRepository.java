@@ -11,9 +11,11 @@ import cc.newmercy.contentservices.neo4j.Nodes;
 import cc.newmercy.contentservices.neo4j.Relationships;
 import cc.newmercy.contentservices.neo4j.jackson.EntityReader;
 import cc.newmercy.contentservices.neo4j.json.Result;
+import cc.newmercy.contentservices.neo4j.json.Row;
 import cc.newmercy.contentservices.web.api.v1.sermonseries.Neo4jSermonSeriesRepository;
 import cc.newmercy.contentservices.web.id.IdService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 
 public class Neo4jSermonRepository extends Neo4jRepository implements SermonRepository {
 
@@ -37,12 +39,17 @@ public class Neo4jSermonRepository extends Neo4jRepository implements SermonRepo
             PASSAGES_PROPERTY,
             CREATED_AT_PROPERTY);
 
-    private static final String HAS_SERMON_LABEL = "HAS_SERMON";
+    public static final String HAS_SERMON_LABEL = "HAS_SERMON";
 
     private static final String LINK_QUERY = Relationships.createRelationshipQuery(
             Neo4jSermonSeriesRepository.SERMON_SERIES_LABEL,
             SERMON_LABEL,
             HAS_SERMON_LABEL);
+
+    private static final String LIST_SERMONS_QUERY = Relationships.listRelationsQuery(
+            Neo4jSermonSeriesRepository.SERMON_SERIES_LABEL,
+            HAS_SERMON_LABEL,
+            SERMON_LABEL);
 
     public Neo4jSermonRepository(
             WebTarget neo4j,
@@ -54,8 +61,14 @@ public class Neo4jSermonRepository extends Neo4jRepository implements SermonRepo
     }
 
     @Override
-    public PersistentSermon get(String id) {
-        return null;
+    public List<PersistentSermon> list(String sermonSeriesId) {
+        Result result = post(query(LIST_SERMONS_QUERY, PersistentSermon.class)
+                .set(Relationships.START_ID_PARAMETER, sermonSeriesId))
+                .get(0);
+
+        List<Row> data = result.getData();
+
+        return Lists.transform(data, row -> row.getColumns().get(0));
     }
 
     @Override

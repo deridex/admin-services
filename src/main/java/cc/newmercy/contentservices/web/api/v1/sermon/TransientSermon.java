@@ -18,6 +18,8 @@ public class TransientSermon extends SermonCommonFields {
     public String toString() {
         return "TransientSermon{" +
                 "name='" + getName() + '\'' +
+                ", date=" + getDate() +
+                ", by='" + getBy() + '\'' +
                 ", description='" + getDescription() + '\'' +
                 ", passages=" + getPassages() +
                 ", createdAt=" + createdAt +

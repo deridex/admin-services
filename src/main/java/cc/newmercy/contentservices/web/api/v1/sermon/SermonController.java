@@ -1,5 +1,6 @@
 package cc.newmercy.contentservices.web.api.v1.sermon;
 
+import java.util.List;
 import java.util.Objects;
 
 import cc.newmercy.contentservices.web.time.ConsistentClock;
@@ -24,13 +25,19 @@ public class SermonController {
         this.sermonRepository = Objects.requireNonNull(sermonRepository, "sermon repository");
     }
 
+    @RequestMapping(method = RequestMethod.GET)
+    @ResponseBody
+    public List<PersistentSermon> listSermons(@PathVariable("sermonSeriesId") String sermonSeriesId) {
+        return sermonRepository.list(sermonSeriesId);
+    }
+
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public PersistentSermon addSermon(@PathVariable("sermonSeriesId") String sermonSeriesId, @RequestBody TransientSermon sermon) {
         logger.debug("adding {} sermon {}", sermonSeriesId, sermon);
 
-        PersistentSermon persistentSermon = sermonRepository.save(sermonSeriesId, sermon, clock.now());
+        PersistentSermon persistentPersistentSermon = sermonRepository.save(sermonSeriesId, sermon, clock.now());
 
-        return persistentSermon;
+        return persistentPersistentSermon;
     }
 }
