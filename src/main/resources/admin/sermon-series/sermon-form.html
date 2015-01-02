@@ -5,8 +5,24 @@
             <input name="name"
                    type="text"
                    placeholder="(required)"
-                   ng-model="sermon.name"
-                   required>
+                   required
+                   ng-model="sermon.name">
+        </div>
+        <div class="pure-control-group">
+            <label>Date</label>
+            <input name="date"
+                   type="date"
+                   placeholder="yyyy-mm-dd"
+                   required
+                   ng-model="sermon.datetime" >
+        </div>
+        <div class="pure-control-group">
+            <label>By</label>
+            <input name="by"
+                   type="text"
+                   placeholder="(required)"
+                   required
+                   ng-model="sermon.by">
         </div>
         <div class="pure-control-group">
             <label>Description</label>

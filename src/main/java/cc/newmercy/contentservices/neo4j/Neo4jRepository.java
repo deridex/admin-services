@@ -1,6 +1,7 @@
 package cc.newmercy.contentservices.neo4j;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -166,6 +167,14 @@ public class Neo4jRepository {
         }
 
         public Query set(String parameter, Instant argument) {
+            return setJsonString(parameter, argument);
+        }
+
+        public Query set(String parameter, LocalDate argument) {
+            return setJsonString(parameter, argument);
+        }
+
+        private Query setJsonString(String parameter, Object argument) {
             if (argument == null) {
                 return set(parameter, (Object) null);
             }

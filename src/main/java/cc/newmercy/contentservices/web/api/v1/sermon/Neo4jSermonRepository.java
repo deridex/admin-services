@@ -25,6 +25,10 @@ public class Neo4jSermonRepository extends Neo4jRepository implements SermonRepo
 
     private static final String NAME_PROPERTY= "name";
 
+    private static final String DATE_PROPERTY = "date";
+
+    private static final String BY_PROPERTY = "by";
+
     private static final String DESCRIPTION_PROPERTY = "description";
 
     private static final String PASSAGES_PROPERTY = "passages";
@@ -35,6 +39,8 @@ public class Neo4jSermonRepository extends Neo4jRepository implements SermonRepo
             SERMON_LABEL,
             true,
             NAME_PROPERTY,
+            BY_PROPERTY,
+            DATE_PROPERTY,
             DESCRIPTION_PROPERTY,
             PASSAGES_PROPERTY,
             CREATED_AT_PROPERTY);
@@ -79,6 +85,8 @@ public class Neo4jSermonRepository extends Neo4jRepository implements SermonRepo
                 query(CREATE_QUERY, PersistentSermon.class)
                         .set(Nodes.ID_PROPERTY, id)
                         .set(NAME_PROPERTY, transientSermon.getName())
+                        .set(BY_PROPERTY, transientSermon.getBy())
+                        .set(DATE_PROPERTY, transientSermon.getDate())
                         .set(DESCRIPTION_PROPERTY, transientSermon.getDescription())
                         .setStrings(PASSAGES_PROPERTY, transientSermon.getPassages())
                         .set(CREATED_AT_PROPERTY, now),
