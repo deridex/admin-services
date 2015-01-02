@@ -37,6 +37,15 @@ public class SermonController {
         return sermonRepository.get(sermonSeriesId, sermonId);
     }
 
+    @RequestMapping(value = "/{sermonId}", method = RequestMethod.PUT)
+    @ResponseBody
+    public PersistentSermon update(
+            @PathVariable("sermonId") String sermonId,
+            @RequestParam("v") Integer version,
+            @RequestBody PersistentSermon editedSermon) {
+        return sermonRepository.update(sermonId, version, editedSermon);
+    }
+
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public PersistentSermon addSermon(@PathVariable("sermonSeriesId") String sermonSeriesId, @RequestBody TransientSermon sermon) {

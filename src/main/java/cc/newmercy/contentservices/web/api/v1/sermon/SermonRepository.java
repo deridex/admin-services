@@ -9,4 +9,6 @@ public interface SermonRepository {
     PersistentSermon save(String seriesId, TransientSermon transientSermon, Instant now);
 
     PersistentSermon get(String sermonSeriesId, String sermonId);
+
+    PersistentSermon update(String sermonId, Integer version, PersistentSermon editedSermon);
 }

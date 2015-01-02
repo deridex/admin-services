@@ -77,7 +77,7 @@ angular.module('nmcc.SermonControllers', ['ngRoute', 'nmcc.ContentServices'])
 
 			$log.info('saving edited sermon ' + JSON.stringify($scope.sermon));
 
-			sermonHandle.put().then(
+			$scope.sermon.put({ v: $scope.sermon.v }).then(
 				function(data) {
 					$log.info('saved edited sermon ' + JSON.stringify(data));
 

@@ -13,6 +13,7 @@ import cc.newmercy.contentservices.neo4j.jackson.EntityReader;
 import cc.newmercy.contentservices.neo4j.json.Result;
 import cc.newmercy.contentservices.neo4j.json.Row;
 import cc.newmercy.contentservices.web.api.v1.sermonseries.Neo4jSermonSeriesRepository;
+import cc.newmercy.contentservices.web.exceptions.BadRequestException;
 import cc.newmercy.contentservices.web.id.IdService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
@@ -44,6 +45,14 @@ public class Neo4jSermonRepository extends Neo4jRepository implements SermonRepo
             DESCRIPTION_PROPERTY,
             PASSAGES_PROPERTY,
             CREATED_AT_PROPERTY);
+
+    private static final String UPDATE_QUERY = Nodes.updateNodeQuery(
+            SERMON_LABEL,
+            NAME_PROPERTY,
+            BY_PROPERTY,
+            DATE_PROPERTY,
+            DESCRIPTION_PROPERTY,
+            PASSAGES_PROPERTY);
 
     public static final String HAS_SERMON_LABEL = "HAS_SERMON";
 
@@ -107,5 +116,24 @@ public class Neo4jSermonRepository extends Neo4jRepository implements SermonRepo
                         .set(Relationships.END_ID_PARAMETER, id));
 
         return results.get(0).getData().get(0).getColumns().get(0);
+    }
+
+    @Override
+    public PersistentSermon update(String sermonId, Integer version, PersistentSermon editedSermon) {
+        PersistentSermon persistentSermon = postForOne(query(UPDATE_QUERY, PersistentSermon.class)
+                .set(Nodes.ID_PROPERTY, sermonId)
+                .set(Nodes.VERSION_PROPERTY, version)
+                .set(NAME_PROPERTY, editedSermon.getName())
+                .set(BY_PROPERTY, editedSermon.getBy())
+                .set(DATE_PROPERTY, editedSermon.getDate())
+                .set(DESCRIPTION_PROPERTY, editedSermon.getDescription())
+                .setStrings(PASSAGES_PROPERTY, editedSermon.getPassages()));
+
+
+        if (persistentSermon == null) {
+            throw new BadRequestException("cannot update sermon " + sermonId + " version " + version);
+        }
+
+        return persistentSermon;
     }
 }
