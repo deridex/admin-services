@@ -7,4 +7,6 @@ public interface SermonRepository {
     List<PersistentSermon> list(String seriesId);
 
     PersistentSermon save(String seriesId, TransientSermon transientSermon, Instant now);
+
+    PersistentSermon get(String sermonSeriesId, String sermonId);
 }

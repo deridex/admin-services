@@ -57,6 +57,11 @@ public class Neo4jSermonRepository extends Neo4jRepository implements SermonRepo
             HAS_SERMON_LABEL,
             SERMON_LABEL);
 
+    private static final String GET_SERMON_QUERY = Relationships.fetchRelatedQuery(
+            Neo4jSermonSeriesRepository.SERMON_SERIES_LABEL,
+            HAS_SERMON_LABEL,
+            SERMON_LABEL);
+
     public Neo4jSermonRepository(
             WebTarget neo4j,
             Neo4jTransaction neo4jTransaction,
@@ -75,6 +80,13 @@ public class Neo4jSermonRepository extends Neo4jRepository implements SermonRepo
         List<Row> data = result.getData();
 
         return Lists.transform(data, row -> row.getColumns().get(0));
+    }
+
+    @Override
+    public PersistentSermon get(String sermonSeriesId, String sermonId) {
+        return postForOne(query(GET_SERMON_QUERY, PersistentSermon.class)
+                .set(Relationships.START_ID_PARAMETER, sermonSeriesId)
+                .set(Relationships.END_ID_PARAMETER, sermonId));
     }
 
     @Override

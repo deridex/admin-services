@@ -1,0 +1,16 @@
+<table class="pure-table pure-table-horizontal pure-table-striped">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Created At</th>
+        <th>Sermons</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr data-ng-repeat="sermonSeries in sermonSeriesList">
+        <td><a href="/sermon-series/#/{{ sermonSeries.id }}">{{ sermonSeries.name }}</a></td>
+        <td><a href="/sermon-series/#/{{ sermonSeries.id }}">{{ sermonSeries.createdAt }}</a></td>
+        <td><a href="/sermon-series/#/{{ sermonSeries.id }}">{{ sermonSeries.sermonCount }}</a></td>
+    </tr>
+    </tbody>
+</table>

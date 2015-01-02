@@ -55,5 +55,16 @@ public final class Relationships {
         return query.toString();
     }
 
+    public static String fetchRelatedQuery(String startLabel, String relationshipLabel, String endLabel) {
+        return String.format("match (:%s { %s: { %s }})-[:%s]->(n:%s { %s: { %s }}) return n",
+                startLabel,
+                Nodes.ID_PROPERTY,
+                START_ID_PARAMETER,
+                relationshipLabel,
+                endLabel,
+                Nodes.ID_PROPERTY,
+                END_ID_PARAMETER);
+    }
+
     private Relationships() { }
 }

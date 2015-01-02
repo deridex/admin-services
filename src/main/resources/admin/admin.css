@@ -1,0 +1,7 @@
+@media screen and (min-width: 48em) {
+    body {
+        width: 48em;
+        margin-right: auto;
+        margin-left: auto;
+    }
+}

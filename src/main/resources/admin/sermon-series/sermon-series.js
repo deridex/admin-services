@@ -1,4 +1,4 @@
-angular.module('nmcc.SermonSeries', ['ngRoute', 'nmcc.SermonSeriesControllers'])
+angular.module('nmcc.SermonSeries', ['ngRoute', 'nmcc.SermonSeriesControllers', 'nmcc.Sermon'])
     .config(['$routeProvider', function($routeProvider) {
         $routeProvider
             .when('/', {
@@ -8,6 +8,14 @@ angular.module('nmcc.SermonSeries', ['ngRoute', 'nmcc.SermonSeriesControllers'])
             .when('/:sermonSeriesId', {
                 controller: 'SermonSeriesEditCtrl as viewCtrl',
                 templateUrl: 'edit.html'
+            })
+            .when('/:sermonSeriesId/add-sermon', {
+                controller: 'SermonAddCtrl',
+                templateUrl: '/sermon/add.html'
+            })
+            .when('/:sermonSeriesId/sermon/:sermonId', {
+                controller: 'SermonEditCtrl',
+                templateUrl: '/sermon/edit.html'
             });
     }])
     .directive('nmccSermonSeriesForm', [function() {
@@ -16,17 +24,6 @@ angular.module('nmcc.SermonSeries', ['ngRoute', 'nmcc.SermonSeriesControllers'])
             templateUrl: 'sermon-series-form.html',
             scope: {
                 sermonSeries: '=',
-                onSave: '&',
-                onCancel: '&'
-            }
-        };
-    }])
-    .directive('nmccSermonForm', [function() {
-        return {
-            restrict: 'E',
-            templateUrl: 'sermon-form.html',
-            scope: {
-                sermon: '=',
                 onSave: '&',
                 onCancel: '&'
             }
