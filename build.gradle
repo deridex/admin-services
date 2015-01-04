@@ -1,6 +1,4 @@
 apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
 
 ext {
 	javaVersion = "1.8"
@@ -22,22 +20,6 @@ configurations {
 
 	all*.exclude group: 'commons-logging', module: 'commons-logging'
 	all*.exclude group: 'org.eclipse.jetty.orbit', module: 'javax.servlet'
-}
-
-eclipse {
-	jdt {
-		sourceCompatibility = javaVersion
-		targetCompatibility = javaVersion
-	}
-
-	classpath {
-		plusConfigurations += configurations.provided
-
-		noExportConfigurations += configurations.provided
-
-		containers.remove('org.eclipse.jdt.launching.JRE_CONTAINER')
-		containers.add("org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-${javaVersion}")
-	}
 }
 
 dependencies {
