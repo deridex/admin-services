@@ -37,8 +37,7 @@ public class Neo4jSermonRepository extends Neo4jRepository implements SermonRepo
     private static final String CREATED_AT_PROPERTY = "createdAt";
 
     private static final String CREATE_QUERY = Nodes.createNodeQuery(
-            SERMON_LABEL,
-            true,
+            true, SERMON_LABEL,
             NAME_PROPERTY,
             BY_PROPERTY,
             DATE_PROPERTY,
@@ -99,7 +98,7 @@ public class Neo4jSermonRepository extends Neo4jRepository implements SermonRepo
     }
 
     @Override
-    public PersistentSermon save(String seriesId, TransientSermon transientSermon, Instant now) {
+    public PersistentSermon save(String seriesId, int version, TransientSermon transientSermon, Instant now) {
         String id = nextId(SEQUENCE_NAME);
 
         List<Result> results = post(
@@ -113,25 +112,26 @@ public class Neo4jSermonRepository extends Neo4jRepository implements SermonRepo
                         .set(CREATED_AT_PROPERTY, now),
                 query(LINK_QUERY, Map.class)
                         .set(Relationships.START_ID_PARAMETER, seriesId)
-                        .set(Relationships.END_ID_PARAMETER, id));
+                        .set(Relationships.START_VERSION_PARAMETER, version)
+                        .set(Relationships.END_ID_PARAMETER, id)
+                        .set(Relationships.END_VERSION_PARAMETER, 1));
 
         return results.get(0).getData().get(0).getColumns().get(0);
     }
 
     @Override
-    public PersistentSermon update(String sermonId, Integer version, PersistentSermon editedSermon) {
+    public PersistentSermon update(String sermonId, int sermonVersion, PersistentSermon editedSermon) {
         PersistentSermon persistentSermon = postForOne(query(UPDATE_QUERY, PersistentSermon.class)
                 .set(Nodes.ID_PROPERTY, sermonId)
-                .set(Nodes.VERSION_PROPERTY, version)
+                .set(Nodes.VERSION_PROPERTY, sermonVersion)
                 .set(NAME_PROPERTY, editedSermon.getName())
                 .set(BY_PROPERTY, editedSermon.getBy())
                 .set(DATE_PROPERTY, editedSermon.getDate())
                 .set(DESCRIPTION_PROPERTY, editedSermon.getDescription())
                 .setStrings(PASSAGES_PROPERTY, editedSermon.getPassages()));
 
-
         if (persistentSermon == null) {
-            throw new BadRequestException("cannot update sermon " + sermonId + " version " + version);
+            throw new BadRequestException("cannot update sermon " + sermonId + " version " + sermonVersion);
         }
 
         return persistentSermon;

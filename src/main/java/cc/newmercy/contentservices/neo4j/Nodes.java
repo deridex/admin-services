@@ -8,11 +8,15 @@ public final class Nodes {
 
 	public static final String VERSION_PROPERTY = "v";
 
-	public static String createNodeQuery(String label, boolean hasId, String... properties) {
+	public static String createNodeQuery(boolean hasVersion, String label, String... properties) {
 		StringBuilder query = new StringBuilder();
 
 		try (Formatter formatter = new Formatter(query)) {
-			formatter.format("create (n:%s { %s: { %2$s }, %s: 1", label, ID_PROPERTY, VERSION_PROPERTY);
+			formatter.format("create (n:%s { %s: { %2$s }", label, ID_PROPERTY);
+
+			if (hasVersion) {
+				formatter.format(", %s: 1", VERSION_PROPERTY);
+			}
 
 			for (String property : properties) {
 				formatter.format(", %s: { %1$s }", property);

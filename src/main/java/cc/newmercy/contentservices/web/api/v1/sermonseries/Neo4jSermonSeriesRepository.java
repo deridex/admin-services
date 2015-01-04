@@ -26,8 +26,7 @@ public class Neo4jSermonSeriesRepository extends Neo4jRepository implements Serm
     public static final String SERMON_SERIES_LABEL = "SermonSeries";
 
     private static final String SAVE_QUERY = Nodes.createNodeQuery(
-            SERMON_SERIES_LABEL,
-            true,
+            true, SERMON_SERIES_LABEL,
             NAME_PROPERTY,
             DESCRIPTION_PROPERTY,
             IMAGE_URL_PROPERTY,

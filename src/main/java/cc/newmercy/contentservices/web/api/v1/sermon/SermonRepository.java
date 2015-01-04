@@ -6,9 +6,9 @@ import java.util.List;
 public interface SermonRepository {
     List<PersistentSermon> list(String seriesId);
 
-    PersistentSermon save(String seriesId, TransientSermon transientSermon, Instant now);
+    PersistentSermon save(String seriesId, int version, TransientSermon transientSermon, Instant now);
 
     PersistentSermon get(String sermonSeriesId, String sermonId);
 
-    PersistentSermon update(String sermonId, Integer version, PersistentSermon editedSermon);
+    PersistentSermon update(String sermonId, int version, PersistentSermon editedSermon);
 }

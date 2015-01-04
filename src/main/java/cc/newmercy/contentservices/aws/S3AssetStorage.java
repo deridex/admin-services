@@ -1,12 +1,11 @@
 package cc.newmercy.contentservices.aws;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.io.InputStream;
+
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 public class S3AssetStorage implements AssetStorage {
 
@@ -20,14 +19,10 @@ public class S3AssetStorage implements AssetStorage {
     }
 
     @Override
-    public void save(String key, MultipartFile file) {
+    public void save(String key, long length, InputStream data) {
         ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentLength(file.getSize());
+        metadata.setContentLength(length);
 
-        try {
-            s3.putObject(bucketName, key, file.getInputStream(), metadata);
-        } catch (IOException e) {
-            throw new IllegalArgumentException(e);
-        }
+        s3.putObject(bucketName, key, data, metadata);
     }
 }

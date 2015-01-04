@@ -21,7 +21,7 @@ public class Neo4jAssetRepository extends Neo4jRepository implements AssetReposi
 
     private static final String LENGTH_PROPERTY = "length";
 
-    private static final String SAVE_QUERY = Nodes.createNodeQuery(LABEL, true, URL_PROPERTY, LENGTH_PROPERTY, CONTENT_TYPE_PROPERTY);
+    private static final String SAVE_QUERY = Nodes.createNodeQuery(false, LABEL, URL_PROPERTY, LENGTH_PROPERTY, CONTENT_TYPE_PROPERTY);
 
     public Neo4jAssetRepository(
             IdService idService,

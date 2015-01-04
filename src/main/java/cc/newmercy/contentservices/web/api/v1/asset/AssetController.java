@@ -37,9 +37,11 @@ public class AssetController {
         transientAsset.setLength(file.getSize());
         transientAsset.setContentType(file.getContentType());
 
+        logger.debug("saving temporary asset {}", transientAsset);
+
         TemporaryAsset temporaryAsset = assetRepository.save(transientAsset);
 
-        assetService.save("tmp/" + temporaryAsset.getId(), file);
+        assetService.save("tmp/" + temporaryAsset.getId(), file.getSize(), file.getInputStream());
 
         return temporaryAsset;
     }

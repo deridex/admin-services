@@ -6,7 +6,11 @@ public final class Relationships {
 
     public static final String START_ID_PARAMETER = "startId";
 
+    public static final String START_VERSION_PARAMETER = "startVersion";
+
     public static final String END_ID_PARAMETER = "endId";
+
+    public static final String END_VERSION_PARAMETER = "endVersion";
 
     public static String listRelationsQuery(
             String startLabel,
@@ -28,13 +32,17 @@ public final class Relationships {
         StringBuilder query = new StringBuilder();
 
         try (Formatter formatter = new Formatter(query)) {
-            formatter.format("match (a:%s { %s: { %s } }), (b:%s { %s: { %s } }) create unique (a)-[r:%s",
+            formatter.format("match (a:%s { %s: { %s }, %s: { %s } }), (b:%s { %s: { %s }, %s: { %s }}) create (a)-[r:%s",
                     startLabel,
                     Nodes.ID_PROPERTY,
                     START_ID_PARAMETER,
+                    Nodes.VERSION_PROPERTY,
+                    START_VERSION_PARAMETER,
                     endLabel,
                     Nodes.ID_PROPERTY,
                     END_ID_PARAMETER,
+                    Nodes.VERSION_PROPERTY,
+                    END_VERSION_PARAMETER,
                     relationshipLabel);
 
             if (properties.length > 0) {
@@ -56,7 +64,7 @@ public final class Relationships {
     }
 
     public static String fetchRelatedQuery(String startLabel, String relationshipLabel, String endLabel) {
-        return String.format("match (:%s { %s: { %s }})-[:%s]->(n:%s { %s: { %s }}) return n",
+        return String.format("match (:%s { %s: { %s } })-[:%s]->(n:%s { %s: { %s } }) return n",
                 startLabel,
                 Nodes.ID_PROPERTY,
                 START_ID_PARAMETER,
@@ -64,6 +72,44 @@ public final class Relationships {
                 endLabel,
                 Nodes.ID_PROPERTY,
                 END_ID_PARAMETER);
+    }
+
+    public static String updateRelationshipQuery(
+            String startLabel,
+            String relationshipLabel,
+            String endLabel,
+            String property,
+            String... otherProperties) {
+        StringBuilder sb = new StringBuilder();
+
+        try (Formatter formatter = new Formatter(sb)) {
+            formatter.format("match (s:%s { %s: { %s }, %s: { %s }})-[r:%s]->(e:%s { %s: { %s }, %s: { %s }}) set s.%s = s.%s + 1, e.%s = e.%s + 1, r = { %s: { %s }",
+                    startLabel,
+                    Nodes.ID_PROPERTY,
+                    START_ID_PARAMETER,
+                    Nodes.VERSION_PROPERTY,
+                    START_VERSION_PARAMETER,
+                    relationshipLabel,
+                    endLabel,
+                    Nodes.ID_PROPERTY,
+                    END_ID_PARAMETER,
+                    Nodes.VERSION_PROPERTY,
+                    END_VERSION_PARAMETER,
+                    Nodes.ID_PROPERTY,
+                    Nodes.ID_PROPERTY,
+                    Nodes.ID_PROPERTY,
+                    Nodes.ID_PROPERTY,
+                    property,
+                    property);
+
+            for (String otherProperty : otherProperties) {
+                formatter.format(", %s: { %1$s }", otherProperty);
+            }
+
+            formatter.format("}) return r");
+        }
+
+        return sb.toString();
     }
 
     private Relationships() { }

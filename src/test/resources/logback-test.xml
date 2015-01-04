@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 	<contextName>content-services</contextName>
+
 	<jmxConfigurator/>
 
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
@@ -9,12 +10,12 @@
 		</encoder>
 	</appender>
 
-	<logger name="org.springframework" level="debug" />
-	
-	<logger name="org.eclipse.jetty.servlet" level="debug" />
-	
-	<logger name="org.eclipse.jetty.server.handler" level="debug" />
-	
+	<logger name="org.springframework" level="info" />
+
+	<logger name="org.eclipse.jetty.servlet" level="info" />
+
+	<logger name="org.eclipse.jetty.server.handler" level="info" />
+
 	<logger name="cc.newmercy" level="debug" />
 
 	<root level="warn">

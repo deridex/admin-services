@@ -4,7 +4,6 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
 
 import cc.newmercy.contentservices.ServerStopper;
-import cc.newmercy.contentservices.aws.AssetStorage;
 import cc.newmercy.contentservices.aws.S3AssetStorage;
 import cc.newmercy.contentservices.config.jackson.ContentServicesModule;
 import cc.newmercy.contentservices.jaxrs.ClientFactory;
@@ -12,16 +11,13 @@ import cc.newmercy.contentservices.neo4j.Neo4jTransaction;
 import cc.newmercy.contentservices.neo4j.Neo4jTransactionManager;
 import cc.newmercy.contentservices.neo4j.jackson.JacksonEntityReader;
 import cc.newmercy.contentservices.web.admin.Neo4jSermonSeriesInfoRepository;
-import cc.newmercy.contentservices.web.api.v1.asset.AssetRepository;
 import cc.newmercy.contentservices.web.api.v1.asset.Neo4jAssetRepository;
+import cc.newmercy.contentservices.web.api.v1.sermon.Neo4jSermonAssetRepository;
 import cc.newmercy.contentservices.web.api.v1.sermon.Neo4jSermonRepository;
 import cc.newmercy.contentservices.web.api.v1.sermonseries.Neo4jSermonSeriesRepository;
-import cc.newmercy.contentservices.web.api.v1.sermonseries.SermonSeriesRepository;
-import cc.newmercy.contentservices.web.id.IdService;
 import cc.newmercy.contentservices.web.id.Neo4jIdService;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
@@ -36,6 +32,9 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 @EnableAspectJAutoProxy
 @EnableTransactionManagement
 public class ContentServicesConfiguration {
+
+    private String s3KeyPrefix = "sermons";
+
     @Bean
     public LocalValidatorFactoryBean validator() {
         return new LocalValidatorFactoryBean();
@@ -84,17 +83,17 @@ public class ContentServicesConfiguration {
     }
 
     @Bean
-    public SermonSeriesRepository sermonSeriesRepository() {
+    public Neo4jSermonSeriesRepository sermonSeriesRepository() {
         return new Neo4jSermonSeriesRepository(idService(), neo4j(), neo4jTransaction(), jsonMapper(), entityReader());
     }
 
     @Bean
-    public IdService idService() {
+    public Neo4jIdService idService() {
         return new Neo4jIdService(neo4j(), entityReader());
     }
 
     @Bean
-    public AmazonS3 s3() {
+    public AmazonS3Client s3() {
         AWSCredentials credentials = new BasicAWSCredentials("AKIAJUPSRMLEWZGWZNFQ", "VZwq3vgRAkHWhH5RpUTdsalFOjZVzuhCnGsziKon");
 
         return new AmazonS3Client(credentials);
@@ -106,17 +105,29 @@ public class ContentServicesConfiguration {
     }
 
     @Bean
-    public AssetStorage assetStorage() {
+    public S3AssetStorage assetStorage() {
         return new S3AssetStorage("content.newmercy.cc", s3());
     }
 
     @Bean
-    public AssetRepository assetRepository() {
+    public Neo4jAssetRepository assetRepository() {
         return new Neo4jAssetRepository(idService(), neo4j(), neo4jTransaction(), jsonMapper(), entityReader());
     }
 
     @Bean
     public Neo4jSermonSeriesInfoRepository sermonSeriesInfoRepo() {
         return new Neo4jSermonSeriesInfoRepository(neo4j(), neo4jTransaction(), idService(), jsonMapper(), entityReader());
+    }
+
+    @Bean
+    public Neo4jSermonAssetRepository sermonAssetRepository() {
+        return new Neo4jSermonAssetRepository(
+                idService(),
+                neo4j(),
+                neo4jTransaction(),
+                jsonMapper(),
+                entityReader(),
+                s3KeyPrefix,
+                assetStorage());
     }
 }

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import cc.newmercy.contentservices.aws.AssetStorage;
 import cc.newmercy.contentservices.web.api.v1.asset.AssetController;
 import cc.newmercy.contentservices.web.api.v1.asset.AssetRepository;
+import cc.newmercy.contentservices.web.api.v1.sermon.SermonAssetRepository;
 import cc.newmercy.contentservices.web.api.v1.sermon.SermonController;
 import cc.newmercy.contentservices.web.api.v1.sermon.SermonRepository;
 import cc.newmercy.contentservices.web.api.v1.sermonseries.SermonSeriesController;
@@ -44,6 +45,9 @@ public class ApiConfiguration implements WebBindingInitializer {
 	private AssetRepository assetRepository;
 
 	@Autowired
+	private SermonAssetRepository sermonAssetRepository;
+
+	@Autowired
 	private AssetStorage assetStorage;
 
 	@Bean
@@ -70,7 +74,7 @@ public class ApiConfiguration implements WebBindingInitializer {
 
 	@Bean
 	public SermonController sermonController() {
-		return new SermonController(consistentClock(), sermonRepository);
+		return new SermonController(consistentClock(), sermonRepository, sermonAssetRepository);
 	}
 
 	@Bean

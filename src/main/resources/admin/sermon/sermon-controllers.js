@@ -1,5 +1,7 @@
 angular.module('nmcc.SermonControllers', ['ngRoute', 'nmcc.ContentServices'])
 	.controller('SermonAddCtrl', ['$scope', '$log', 'contentApi', '$routeParams', '$filter', '$location', function($scope, $log, contentApi, $routeParams, $filter, $location) {
+		var sermonSeriesVersion = $scope.pageCtrl.sermonSeriesVersion;
+
 		var dateFilter = $filter('date');
 
 		var yyyymmdd = function(dateTime) {
@@ -12,7 +14,7 @@ angular.module('nmcc.SermonControllers', ['ngRoute', 'nmcc.ContentServices'])
 
 		var sermonSeriesId = $routeParams.sermonSeriesId;
 
-		var sermonsApi = contentApi.one('sermon-series', sermonSeriesId).all('sermons');
+		var sermonsSeriesApi = contentApi.one('sermon-series', sermonSeriesId);
 
 		$scope.transientSermon = {};
 
@@ -23,11 +25,11 @@ angular.module('nmcc.SermonControllers', ['ngRoute', 'nmcc.ContentServices'])
 
 			$log.info('saving new sermon ' + JSON.stringify($scope.transientSermon));
 
-			sermonsApi.post($scope.transientSermon).then(
+			sermonsSeriesApi.post('sermons', $scope.transientSermon, { v: sermonSeriesVersion }).then(
 				function(data) {
 					$log.info('save sermon ' + JSON.stringify(data));
 
-					$location.path('/' + sermonSeriesId);
+					$location.path('/' + sermonSeriesId + '/sermon/' + data.id);
 				},
 				function(error) {
 					$log.info('failed to save sermon because ' + JSON.stringify(error));
