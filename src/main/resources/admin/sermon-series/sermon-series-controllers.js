@@ -1,5 +1,7 @@
 angular.module('nmcc.SermonSeriesControllers', ['ngRoute', 'nmcc.ContentServices'])
-	.controller('SermonSeriesCtrl', [function() { }])
+	.controller('SermonSeriesCtrl', [function() {
+		this.versions = {};
+	}])
 	.controller('SermonSeriesAddCtrl', ['$scope', '$log', '$location', 'contentApi', function($scope, $log, $location, contentApi) {
 		$log.info('building sermon series add control');
 
@@ -23,7 +25,7 @@ angular.module('nmcc.SermonSeriesControllers', ['ngRoute', 'nmcc.ContentServices
 				});
 		};
 	}])
-	.controller('SermonSeriesEditCtrl', ['$scope', '$log', '$routeParams', 'contentApi', '$route', '$filter', '$location', function($scope, $log, $routeParams, contentApi, $route, $filter, $location) {
+	.controller('SermonSeriesEditCtrl', ['$scope', '$log', '$routeParams', 'contentApi', '$route', '$location', function($scope, $log, $routeParams, contentApi, $route, $location) {
 		var sermonSeriesId = $routeParams.sermonSeriesId;
 
 		$scope.sermonSeriesHandle = contentApi.one('sermon-series', sermonSeriesId);
@@ -31,7 +33,7 @@ angular.module('nmcc.SermonSeriesControllers', ['ngRoute', 'nmcc.ContentServices
 			$log.info('fetched sermon series ' + JSON.stringify(data));
 
 			$scope.sermonSeries = data;
-			$scope.pageCtrl.sermonSeriesVersion = data.v;
+			$scope.pageCtrl.versions['sermon-series'] = data.v;
 		});
 
 		$scope.editIdx = 0;
@@ -57,19 +59,8 @@ angular.module('nmcc.SermonSeriesControllers', ['ngRoute', 'nmcc.ContentServices
 				}
 			);
 		};
-		var dateFilter = $filter('date');
-
-		var yyyymmdd = function(dateTime) {
-			return dateFilter(dateTime, 'yyyy-MM-dd');
-		};
-
-		var datetime = function(yyyymmdd) {
-			return new Date(dateFilter(yyyymmdd, 'yyyy-MM-ddTHH:mm:ss.sss', 'UTC') + 'Z');
-		};
 
 		$scope.handleAddSermon = function() {
-			$log.info('adding sermon');
-
 			$location.path('/' + sermonSeriesId + '/add-sermon');
 		};
 

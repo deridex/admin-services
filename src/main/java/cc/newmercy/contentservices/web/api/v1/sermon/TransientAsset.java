@@ -1,19 +1,19 @@
-package cc.newmercy.contentservices.web.api.v1.asset;
+package cc.newmercy.contentservices.web.api.v1.sermon;
 
-public class TemporaryAsset {
+public class TransientAsset {
 
-    private String id;
+    private String name;
 
     private String contentType;
 
     private long length;
 
-    public String getId() {
-        return id;
+    public String getName() {
+        return name;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getContentType() {
@@ -34,9 +34,9 @@ public class TemporaryAsset {
 
     @Override
     public String toString() {
-        return "TemporaryAsset{" +
-                "id='" + id + '\'' +
-                ", contentType='" + contentType + '\'' +
+        return "TransientAsset{" +
+                "name='" + name + '\'' +
+                ",contentType='" + contentType + '\'' +
                 ", length=" + length +
                 '}';
     }

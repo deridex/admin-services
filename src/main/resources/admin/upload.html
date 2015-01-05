@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Upload Sandbox</title>
+<script src="/js/vendor/angularjs-1.3.5/angular.js"></script>
+<script src="/js/vendor/angular-file-upload-2.0.4/angular-file-upload.js"></script>
+<script>
+angular.module('myApp', ['angularFileUpload'])
+        .controller('MyCtrl', ['$scope', '$upload', function($scope, $upload) {
+            $scope.fileSelected = function($files, $event) {
+                $scope.upload = $upload.upload({
+                    url: '/api/v1/assets',
+                    file: $files[0],
+                    fileFormDataName: 'file'
+                })
+                .progress(function(evt) {
+                    console.log('progress: ' + parseInt(100.0 * evt.loaded / evt.total) + '% file :'+ evt.config.file.name);
+                })
+                .success(function(data, status, headers, config) {
+                    console.log('file ' + config.file.name + ' is uploaded successfully. Response: ' + data);
+                });
+            };
+        }]);
+</script>
+</head>
+<body>
+<!--form name="uploadForm" novalidate action="/api/v1/assets" method="POST" enctype="multipart/form-data">
+<div>
+    <input name="data" type="file" multiple>
+</div>
+<div>
+<input type="submit" value="Submit">
+</div>
+</form-->
+<div data-ng-app="myApp" data-ng-controller="MyCtrl">
+    <input type="file"
+            resetOnClick="true"
+            data-ng-file-select
+            data-ng-file-model="file"
+            data-ng-file-change="fileSelected($files, $event)">
+</div>
+</body>
+</html>

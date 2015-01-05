@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.InputStream;
 
+import cc.newmercy.contentservices.web.api.v1.sermon.TransientAsset;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 
@@ -19,9 +20,10 @@ public class S3AssetStorage implements AssetStorage {
     }
 
     @Override
-    public void save(String key, long length, InputStream data) {
+    public void save(String key, TransientAsset transientAsset, InputStream data) {
         ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentLength(length);
+        metadata.setContentLength(transientAsset.getLength());
+        metadata.setContentType(transientAsset.getContentType());
 
         s3.putObject(bucketName, key, data, metadata);
     }

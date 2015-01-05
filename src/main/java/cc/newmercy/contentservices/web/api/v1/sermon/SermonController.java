@@ -82,4 +82,10 @@ public class SermonController {
 
         return asset;
     }
+
+    @RequestMapping(value = "/{sermonId}/assets", method = RequestMethod.GET)
+    @ResponseBody
+    public List<SermonAsset> listAssets(@PathVariable("sermonId") String sermonId, @RequestParam("v") int sermonVersion) {
+        return sermonAssetRepository.list(sermonId, sermonVersion);
+    }
 }

@@ -1,10 +1,18 @@
 package cc.newmercy.contentservices.neo4j;
 
 import java.util.Formatter;
+import java.util.List;
+
+import cc.newmercy.contentservices.neo4j.json.Result;
+import cc.newmercy.contentservices.neo4j.json.Row;
+import cc.newmercy.contentservices.web.exceptions.ConflictException;
+import cc.newmercy.contentservices.web.exceptions.NotFoundException;
 
 public final class Nodes {
 
 	public static final String ID_PROPERTY = "id";
+
+	public static final String ID_PARAMETER = "id";
 
 	public static final String VERSION_PROPERTY = "v";
 
@@ -36,6 +44,24 @@ public final class Nodes {
 		}
 
 		return query.toString();
+	}
+
+	public static void ensureVersion(Result result, String type, String id, int version) {
+		List<Row> versionData = result.getData();
+
+		if (versionData.isEmpty()) {
+			throw new NotFoundException("no such " + type + " '" + id + "'");
+		}
+
+		int currentVersion = versionData.get(0).getColumns().<Integer> get(0).intValue();
+
+		if (currentVersion != version) {
+			throw new ConflictException(String.format("%s '%s' is version %d not %d", type, id, version, currentVersion));
+		}
+
+	}
+	public static String getVersionQuery(String label) {
+		return String.format("match (n:%s { %s : { %s } }) return n.%s", label, ID_PROPERTY, ID_PROPERTY, VERSION_PROPERTY);
 	}
 
 	public static String updateNodeQuery(String label, String property, String... otherProperties) {

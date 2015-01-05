@@ -1,6 +1,12 @@
 angular.module('nmcc.SermonControllers', ['ngRoute', 'nmcc.ContentServices'])
 	.controller('SermonAddCtrl', ['$scope', '$log', 'contentApi', '$routeParams', '$filter', '$location', function($scope, $log, contentApi, $routeParams, $filter, $location) {
-		var sermonSeriesVersion = $scope.pageCtrl.sermonSeriesVersion;
+		var sermonSeriesVersion = $scope.pageCtrl.versions['sermon-series'];
+
+		if (!sermonSeriesVersion) {
+			$log.info('sermon series metadata not found so redirecting to sermon series');
+
+			$location.path('/' + $routeParams.sermonSeriesId);
+		}
 
 		var dateFilter = $filter('date');
 

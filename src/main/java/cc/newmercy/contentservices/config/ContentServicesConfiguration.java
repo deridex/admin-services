@@ -11,7 +11,6 @@ import cc.newmercy.contentservices.neo4j.Neo4jTransaction;
 import cc.newmercy.contentservices.neo4j.Neo4jTransactionManager;
 import cc.newmercy.contentservices.neo4j.jackson.JacksonEntityReader;
 import cc.newmercy.contentservices.web.admin.Neo4jSermonSeriesInfoRepository;
-import cc.newmercy.contentservices.web.api.v1.asset.Neo4jAssetRepository;
 import cc.newmercy.contentservices.web.api.v1.sermon.Neo4jSermonAssetRepository;
 import cc.newmercy.contentservices.web.api.v1.sermon.Neo4jSermonRepository;
 import cc.newmercy.contentservices.web.api.v1.sermonseries.Neo4jSermonSeriesRepository;
@@ -107,11 +106,6 @@ public class ContentServicesConfiguration {
     @Bean
     public S3AssetStorage assetStorage() {
         return new S3AssetStorage("content.newmercy.cc", s3());
-    }
-
-    @Bean
-    public Neo4jAssetRepository assetRepository() {
-        return new Neo4jAssetRepository(idService(), neo4j(), neo4jTransaction(), jsonMapper(), entityReader());
     }
 
     @Bean
