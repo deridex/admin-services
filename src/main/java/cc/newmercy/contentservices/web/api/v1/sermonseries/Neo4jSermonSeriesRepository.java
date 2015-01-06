@@ -1,11 +1,10 @@
 package cc.newmercy.contentservices.web.api.v1.sermonseries;
 
 import java.time.Instant;
-import javax.ws.rs.client.WebTarget;
 
 import cc.newmercy.contentservices.neo4j.Neo4jRepository;
-import cc.newmercy.contentservices.neo4j.Neo4jTransaction;
 import cc.newmercy.contentservices.neo4j.Nodes;
+import cc.newmercy.contentservices.neo4j.RequestExecutor;
 import cc.newmercy.contentservices.neo4j.jackson.EntityReader;
 import cc.newmercy.contentservices.web.exceptions.BadRequestException;
 import cc.newmercy.contentservices.web.id.IdService;
@@ -41,12 +40,11 @@ public class Neo4jSermonSeriesRepository extends Neo4jRepository implements Serm
             IMAGE_URL_PROPERTY);
 
     public Neo4jSermonSeriesRepository(
+            RequestExecutor requestExecutor,
             IdService idService,
-            WebTarget neo4j,
-            Neo4jTransaction neo4jTransaction,
             ObjectMapper jsonMapper,
             EntityReader entityReader) {
-        super(neo4j, neo4jTransaction, idService, jsonMapper, entityReader);
+        super(requestExecutor, idService, jsonMapper, entityReader);
     }
 
     @Override

@@ -2,10 +2,9 @@ package cc.newmercy.contentservices.web.admin;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.ws.rs.client.WebTarget;
 
 import cc.newmercy.contentservices.neo4j.Neo4jRepository;
-import cc.newmercy.contentservices.neo4j.Neo4jTransaction;
+import cc.newmercy.contentservices.neo4j.RequestExecutor;
 import cc.newmercy.contentservices.neo4j.jackson.EntityReader;
 import cc.newmercy.contentservices.neo4j.json.Row;
 import cc.newmercy.contentservices.web.api.v1.sermon.Neo4jSermonRepository;
@@ -26,8 +25,8 @@ public class Neo4jSermonSeriesInfoRepository extends Neo4jRepository implements 
             SKIP_PARAM,
             PAGE_SIZE_PARAM);
 
-    public Neo4jSermonSeriesInfoRepository(WebTarget neo4j, Neo4jTransaction neo4jTransaction, IdService idService, ObjectMapper jsonMapper, EntityReader entityReader) {
-        super(neo4j, neo4jTransaction, idService, jsonMapper, entityReader);
+    public Neo4jSermonSeriesInfoRepository(RequestExecutor requestExecutor, IdService idService, ObjectMapper jsonMapper, EntityReader entityReader) {
+        super(requestExecutor, idService, jsonMapper, entityReader);
     }
 
     @Override

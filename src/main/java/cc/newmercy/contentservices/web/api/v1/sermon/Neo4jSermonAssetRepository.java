@@ -2,20 +2,16 @@ package cc.newmercy.contentservices.web.api.v1.sermon;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import javax.ws.rs.client.WebTarget;
 
-import cc.newmercy.contentservices.aws.AssetStorage;
 import cc.newmercy.contentservices.neo4j.Neo4jRepository;
-import cc.newmercy.contentservices.neo4j.Neo4jTransaction;
 import cc.newmercy.contentservices.neo4j.Nodes;
 import cc.newmercy.contentservices.neo4j.Relationships;
+import cc.newmercy.contentservices.neo4j.RequestExecutor;
 import cc.newmercy.contentservices.neo4j.jackson.EntityReader;
 import cc.newmercy.contentservices.neo4j.json.Result;
 import cc.newmercy.contentservices.web.exceptions.BadRequestException;
 import cc.newmercy.contentservices.web.id.IdService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,8 +19,6 @@ import org.slf4j.LoggerFactory;
 public class Neo4jSermonAssetRepository extends Neo4jRepository implements SermonAssetRepository {
 
     private static final String SERMON_ASSET_LABEL = "SermonAsset";
-
-    private static final String ID_SERIES_NAME = "asset";
 
     private static final String CONTENT_TYPE_PROPERTY = "contentType";
 
@@ -60,25 +54,12 @@ public class Neo4jSermonAssetRepository extends Neo4jRepository implements Sermo
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private AssetStorage assetStore;
-
-    private String keyPrefix;
-
     public Neo4jSermonAssetRepository(
+            RequestExecutor requestExecutor,
             IdService idService,
-            WebTarget neo4j,
-            Neo4jTransaction neo4jTransaction,
             ObjectMapper jsonMapper,
-            EntityReader entityReader,
-            String keyPrefix,
-            AssetStorage assetStorage) {
-        super(neo4j, neo4jTransaction, idService, jsonMapper, entityReader);
-
-        Objects.requireNonNull(keyPrefix, "key prefix");
-        Preconditions.checkArgument(!keyPrefix.isEmpty(), "key prefix");
-        this.keyPrefix = keyPrefix;
-
-        this.assetStore = Objects.requireNonNull(assetStorage, "asset storage");
+            EntityReader entityReader) {
+        super(requestExecutor, idService, jsonMapper, entityReader);
     }
 
     @Override
@@ -96,22 +77,18 @@ public class Neo4jSermonAssetRepository extends Neo4jRepository implements Sermo
 
     @Override
     public SermonAsset save(String sermonId, int sermonVersion, TransientAsset transientAsset) {
-        String assetId = nextId(ID_SERIES_NAME);
-
-        String key = keyPrefix + "/" + transientAsset.getName();
-
         List<Result> results = post(
                 query(GET_SERMON_VERSION_QUERY, Integer.class)
                         .set(Nodes.ID_PARAMETER, sermonId),
                 query(SAVE_QUERY, SermonAsset.class)
-                        .set(Nodes.ID_PROPERTY, assetId)
+                        .set(Nodes.ID_PROPERTY, transientAsset.getId())
                         .set(CONTENT_TYPE_PROPERTY, transientAsset.getContentType())
-                        .set(S3_KEY_PROPERTY, key)
+                        .set(S3_KEY_PROPERTY, transientAsset.getKey())
                         .set(LENGTH_PROPERTY, transientAsset.getLength()),
                 query(LINK_QUERY, Map.class)
                         .set(Relationships.START_ID_PARAMETER, sermonId)
                         .set(Relationships.START_VERSION_PARAMETER, sermonVersion)
-                        .set(Relationships.END_ID_PARAMETER, assetId));
+                        .set(Relationships.END_ID_PARAMETER, transientAsset.getId()));
 
         Nodes.ensureVersion(results.get(0), Neo4jSermonRepository.SERMON_LABEL, sermonId, sermonVersion);
 
@@ -125,7 +102,10 @@ public class Neo4jSermonAssetRepository extends Neo4jRepository implements Sermo
 
         assert linkResult.getData().size() == 1;
 
-        logger.debug("sermon '{}' linked by {} to asset '{}'", sermonId, linkResult.getData().get(0).getColumns().get(0), assetId);
+        logger.debug("sermon '{}' linked by {} to asset '{}'",
+                sermonId,
+                linkResult.getData().get(0).getColumns().get(0),
+                transientAsset.getId());
 
         return asset;
     }

@@ -3,12 +3,11 @@ package cc.newmercy.contentservices.web.api.v1.sermon;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
-import javax.ws.rs.client.WebTarget;
 
 import cc.newmercy.contentservices.neo4j.Neo4jRepository;
-import cc.newmercy.contentservices.neo4j.Neo4jTransaction;
 import cc.newmercy.contentservices.neo4j.Nodes;
 import cc.newmercy.contentservices.neo4j.Relationships;
+import cc.newmercy.contentservices.neo4j.RequestExecutor;
 import cc.newmercy.contentservices.neo4j.jackson.EntityReader;
 import cc.newmercy.contentservices.neo4j.json.Result;
 import cc.newmercy.contentservices.neo4j.json.Row;
@@ -71,12 +70,11 @@ public class Neo4jSermonRepository extends Neo4jRepository implements SermonRepo
             SERMON_LABEL);
 
     public Neo4jSermonRepository(
-            WebTarget neo4j,
-            Neo4jTransaction neo4jTransaction,
+            RequestExecutor requestExecutor,
             IdService idService,
             ObjectMapper jsonMapper,
             EntityReader entityReader) {
-        super(neo4j, neo4jTransaction, idService, jsonMapper, entityReader);
+        super(requestExecutor, idService, jsonMapper, entityReader);
     }
 
     @Override

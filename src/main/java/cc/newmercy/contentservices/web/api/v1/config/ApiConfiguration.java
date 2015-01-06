@@ -2,12 +2,13 @@ package cc.newmercy.contentservices.web.api.v1.config;
 
 import java.util.Arrays;
 
-import cc.newmercy.contentservices.aws.AssetStorage;
+import cc.newmercy.contentservices.aws.AssetStore;
 import cc.newmercy.contentservices.web.api.v1.sermon.SermonAssetRepository;
 import cc.newmercy.contentservices.web.api.v1.sermon.SermonController;
 import cc.newmercy.contentservices.web.api.v1.sermon.SermonRepository;
 import cc.newmercy.contentservices.web.api.v1.sermonseries.SermonSeriesController;
 import cc.newmercy.contentservices.web.api.v1.sermonseries.SermonSeriesRepository;
+import cc.newmercy.contentservices.web.id.IdService;
 import cc.newmercy.contentservices.web.time.ConsistentClock;
 import cc.newmercy.contentservices.web.time.DefaultClock;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,6 +28,9 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 @EnableAspectJAutoProxy
 @EnableWebMvc
 public class ApiConfiguration implements WebBindingInitializer {
+
+	private String s3KeyPrefix = "sermons";
+
 	@Autowired
 	private ObjectMapper jsonMapper;
 
@@ -43,7 +47,10 @@ public class ApiConfiguration implements WebBindingInitializer {
 	private SermonAssetRepository sermonAssetRepository;
 
 	@Autowired
-	private AssetStorage assetStorage;
+	private IdService idService;
+
+	@Autowired
+	private AssetStore assetStore;
 
 	@Bean
 	public Object requestMappingHandlerAdapter() {
@@ -69,7 +76,13 @@ public class ApiConfiguration implements WebBindingInitializer {
 
 	@Bean
 	public SermonController sermonController() {
-		return new SermonController(consistentClock(), sermonRepository, sermonAssetRepository);
+		return new SermonController(
+				consistentClock(),
+				sermonRepository,
+				idService,
+				sermonAssetRepository,
+				s3KeyPrefix,
+				assetStore);
 	}
 
 	@Bean

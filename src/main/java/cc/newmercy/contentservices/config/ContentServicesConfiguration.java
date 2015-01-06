@@ -1,15 +1,14 @@
 package cc.newmercy.contentservices.config;
 
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.WebTarget;
 
 import cc.newmercy.contentservices.ServerStopper;
-import cc.newmercy.contentservices.aws.S3AssetStorage;
+import cc.newmercy.contentservices.aws.S3AssetStore;
 import cc.newmercy.contentservices.config.jackson.ContentServicesModule;
 import cc.newmercy.contentservices.jaxrs.ClientFactory;
-import cc.newmercy.contentservices.neo4j.Neo4jTransaction;
-import cc.newmercy.contentservices.neo4j.Neo4jTransactionManager;
+import cc.newmercy.contentservices.neo4j.RequestExecutor;
 import cc.newmercy.contentservices.neo4j.jackson.JacksonEntityReader;
+import cc.newmercy.contentservices.neo4j.tx.Neo4jTransactionManager;
 import cc.newmercy.contentservices.web.admin.Neo4jSermonSeriesInfoRepository;
 import cc.newmercy.contentservices.web.api.v1.sermon.Neo4jSermonAssetRepository;
 import cc.newmercy.contentservices.web.api.v1.sermon.Neo4jSermonRepository;
@@ -33,6 +32,8 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 public class ContentServicesConfiguration {
 
     private String s3KeyPrefix = "sermons";
+
+    private String neo4jRoot = "http://127.0.0.1:7474/db/data/transaction";
 
     @Bean
     public LocalValidatorFactoryBean validator() {
@@ -67,28 +68,23 @@ public class ContentServicesConfiguration {
     }
 
     @Bean
-    public WebTarget neo4j() {
-        return jaxRsClient().target("http://127.0.0.1:7474/db/data/transaction");
-    }
-
-    @Bean
     public Neo4jTransactionManager neo4jTransactionManager() {
-        return new Neo4jTransactionManager(jaxRsClient());
+        return new Neo4jTransactionManager(jaxRsClient(), neo4jRoot);
     }
 
     @Bean
-    public Neo4jTransaction neo4jTransaction() {
-        return neo4jTransactionManager().getTransaction();
+    public RequestExecutor requestExecutor() {
+        return neo4jTransactionManager().getRequestExecutor();
     }
 
     @Bean
     public Neo4jSermonSeriesRepository sermonSeriesRepository() {
-        return new Neo4jSermonSeriesRepository(idService(), neo4j(), neo4jTransaction(), jsonMapper(), entityReader());
+        return new Neo4jSermonSeriesRepository(requestExecutor(), idService(), jsonMapper(), entityReader());
     }
 
     @Bean
     public Neo4jIdService idService() {
-        return new Neo4jIdService(neo4j(), entityReader());
+        return new Neo4jIdService(jaxRsClient().target(neo4jRoot), entityReader());
     }
 
     @Bean
@@ -100,28 +96,25 @@ public class ContentServicesConfiguration {
 
     @Bean
     public Neo4jSermonRepository sermonRepository() {
-        return new Neo4jSermonRepository(neo4j(), neo4jTransaction(), idService(), jsonMapper(), entityReader());
+        return new Neo4jSermonRepository(requestExecutor(), idService(), jsonMapper(), entityReader());
     }
 
     @Bean
-    public S3AssetStorage assetStorage() {
-        return new S3AssetStorage("content.newmercy.cc", s3());
+    public S3AssetStore assetStorage() {
+        return new S3AssetStore("content.newmercy.cc", s3());
     }
 
     @Bean
     public Neo4jSermonSeriesInfoRepository sermonSeriesInfoRepo() {
-        return new Neo4jSermonSeriesInfoRepository(neo4j(), neo4jTransaction(), idService(), jsonMapper(), entityReader());
+        return new Neo4jSermonSeriesInfoRepository(requestExecutor(), idService(), jsonMapper(), entityReader());
     }
 
     @Bean
     public Neo4jSermonAssetRepository sermonAssetRepository() {
         return new Neo4jSermonAssetRepository(
+                requestExecutor(),
                 idService(),
-                neo4j(),
-                neo4jTransaction(),
                 jsonMapper(),
-                entityReader(),
-                s3KeyPrefix,
-                assetStorage());
+                entityReader());
     }
 }

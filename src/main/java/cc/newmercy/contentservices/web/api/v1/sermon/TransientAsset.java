@@ -2,18 +2,28 @@ package cc.newmercy.contentservices.web.api.v1.sermon;
 
 public class TransientAsset {
 
-    private String name;
+    private String id;
+
+    private String key;
 
     private String contentType;
 
     private long length;
 
-    public String getName() {
-        return name;
+    public String getId() {
+        return id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 
     public String getContentType() {
@@ -35,7 +45,8 @@ public class TransientAsset {
     @Override
     public String toString() {
         return "TransientAsset{" +
-                "name='" + name + '\'' +
+                "id='" + id + '\'' +
+                ",key='" + key + '\'' +
                 ",contentType='" + contentType + '\'' +
                 ", length=" + length +
                 '}';

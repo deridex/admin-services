@@ -6,7 +6,6 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -32,22 +31,18 @@ public class Neo4jRepository {
 
     private final IdService idService;
 
-    private WebTarget neo4j;
+    private final RequestExecutor requestExecutor;
 
-    private Neo4jTransaction neo4jTransaction;
+    private final EntityReader entityReader;
 
-    private EntityReader entityReader;
-
-    private ObjectMapper jsonMapper;
+    private final ObjectMapper jsonMapper;
 
     protected Neo4jRepository(
-            WebTarget neo4j,
-            Neo4jTransaction neo4jTransaction,
+            RequestExecutor requestExecutor,
             IdService idService,
             ObjectMapper jsonMapper,
             EntityReader entityReader) {
-        this.neo4j = Objects.requireNonNull(neo4j, "neo4j web target");
-        this.neo4jTransaction = Objects.requireNonNull(neo4jTransaction, "neo4j transaction");
+        this.requestExecutor = Objects.requireNonNull(requestExecutor, "request executor");
         this.idService = Objects.requireNonNull(idService, "id service");
         this.jsonMapper = Objects.requireNonNull(jsonMapper, "json mapper");
         this.entityReader = Objects.requireNonNull(entityReader, "entity reader");
@@ -62,8 +57,6 @@ public class Neo4jRepository {
         Preconditions.checkArgument(queries.length > 0, "no queries");
 
         Response response = executePost(queries);
-
-        neo4jTransaction.setTransactionUrl(response.getHeaderString("Location"));
 
         EntityReader.Parser parser = entityReader.parse(queries[0].types.apply(jsonMapper.getTypeFactory()));
 
@@ -97,14 +90,7 @@ public class Neo4jRepository {
 
         logger.debug("executing request {}", request);
 
-        Response response = neo4j.request(MediaType.APPLICATION_JSON_TYPE).post(Entity.json(request));
-
-        if (response.getStatus() != Response.Status.CREATED.getStatusCode()) {
-            Response.StatusType statusInfo = response.getStatusInfo();
-
-            throw new RepositoryException(statusInfo.getStatusCode() + " " + statusInfo.getReasonPhrase());
-        }
-        return response;
+        return requestExecutor.post(MediaType.APPLICATION_JSON_TYPE, Entity.json(request));
     }
 
     protected final <T> T postForOne(Query... queries) {

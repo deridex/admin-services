@@ -22,16 +22,19 @@ angular.module('nmcc.SermonControllers', ['ngRoute', 'nmcc.ContentServices'])
 
 		var sermonsSeriesApi = contentApi.one('sermon-series', sermonSeriesId);
 
-		$scope.transientSermon = {};
+		$scope.sermonData = {};
 
 		$scope.handleSave = function() {
-			$scope.transientSermon.date = yyyymmdd($scope.transientSermon.datetime);
+			var transientSermon = {
+				name: $scope.sermonData.name,
+				date: yyyymmdd($scope.sermonData.datetime),
+				by: $scope.sermonData.by,
+				description: $scope.sermonData.description
+			};
 
-			delete $scope.transientSermon.datetime;
+			$log.info('saving new sermon ' + JSON.stringify(transientSermon));
 
-			$log.info('saving new sermon ' + JSON.stringify($scope.transientSermon));
-
-			sermonsSeriesApi.post('sermons', $scope.transientSermon, { v: sermonSeriesVersion }).then(
+			sermonsSeriesApi.post('sermons', transientSermon, { v: sermonSeriesVersion }).then(
 				function(data) {
 					$log.info('save sermon ' + JSON.stringify(data));
 
@@ -63,15 +66,18 @@ angular.module('nmcc.SermonControllers', ['ngRoute', 'nmcc.ContentServices'])
 
 		var sermonHandle = contentApi.one('sermon-series', sermonSeriesId).one('sermons', sermonId);
 
+		$scope.sermonData = {};
+
 		sermonHandle.get().then(
 			function(data) {
 				$log.info('fetched sermon ' + JSON.stringify(data));
 
-				data.datetime = datetime(data.date);
+				$scope.sermonData.name = data.name;
+				$scope.sermonData.datetime = datetime(data.date);
+				$scope.sermonData.by = data.by;
+				$scope.sermonData.description = data.description;
 
-				delete data.date;
-
-				$scope.sermon = data;
+				$scope.sermonEntity = data;
 			},
 			function(error) {
 				$log.error('could not fetch sermon ' + JSON.stringify(error));
@@ -79,13 +85,14 @@ angular.module('nmcc.SermonControllers', ['ngRoute', 'nmcc.ContentServices'])
 		);
 
 		$scope.handleSave = function() {
-			$scope.sermon.date = yyyymmdd($scope.sermon.datetime);
+			$scope.sermonEntity.name = $scope.sermonData.name;
+			$scope.sermonEntity.date = yyyymmdd($scope.sermonData.datetime);
+			$scope.sermonEntity.by = $scope.sermonData.by;
+			$scope.sermonEntity.description = $scope.sermonData.description;
 
-			delete $scope.sermon.datetime;
+			$log.info('saving edited sermon ' + JSON.stringify($scope.sermonData));
 
-			$log.info('saving edited sermon ' + JSON.stringify($scope.sermon));
-
-			$scope.sermon.put({ v: $scope.sermon.v }).then(
+			$scope.sermonEntity.put({ v: $scope.sermonEntity.v }).then(
 				function(data) {
 					$log.info('saved edited sermon ' + JSON.stringify(data));
 
