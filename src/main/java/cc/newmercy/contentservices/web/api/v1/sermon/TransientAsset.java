@@ -1,29 +1,31 @@
 package cc.newmercy.contentservices.web.api.v1.sermon;
 
+import java.time.LocalDate;
+
 public class TransientAsset {
 
-    private String id;
+    private String name;
 
-    private String key;
+    private LocalDate date;
 
     private String contentType;
 
     private long length;
 
-    public String getId() {
-        return id;
+    public String getName() {
+        return name;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getKey() {
-        return key;
+    public LocalDate getDate() {
+        return date;
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
 
     public String getContentType() {
@@ -45,9 +47,9 @@ public class TransientAsset {
     @Override
     public String toString() {
         return "TransientAsset{" +
-                "id='" + id + '\'' +
-                ",key='" + key + '\'' +
-                ",contentType='" + contentType + '\'' +
+                "name='" + name + '\'' +
+                ", date=" + date +
+                ", contentType='" + contentType + '\'' +
                 ", length=" + length +
                 '}';
     }

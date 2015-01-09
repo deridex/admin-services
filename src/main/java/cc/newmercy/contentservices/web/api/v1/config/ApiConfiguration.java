@@ -28,9 +28,6 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 @EnableAspectJAutoProxy
 @EnableWebMvc
 public class ApiConfiguration implements WebBindingInitializer {
-
-	private String s3KeyPrefix = "sermons";
-
 	@Autowired
 	private ObjectMapper jsonMapper;
 
@@ -79,10 +76,8 @@ public class ApiConfiguration implements WebBindingInitializer {
 		return new SermonController(
 				consistentClock(),
 				sermonRepository,
-				idService,
-				sermonAssetRepository,
-				s3KeyPrefix,
-				assetStore);
+				sermonAssetRepository
+		);
 	}
 
 	@Bean

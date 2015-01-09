@@ -101,7 +101,7 @@ public class ContentServicesConfiguration {
 
     @Bean
     public S3AssetStore assetStorage() {
-        return new S3AssetStore("content.newmercy.cc", s3());
+        return new S3AssetStore(s3(), "content.newmercy.cc");
     }
 
     @Bean
@@ -115,6 +115,8 @@ public class ContentServicesConfiguration {
                 requestExecutor(),
                 idService(),
                 jsonMapper(),
-                entityReader());
+                entityReader(),
+                s3KeyPrefix,
+                assetStorage());
     }
 }

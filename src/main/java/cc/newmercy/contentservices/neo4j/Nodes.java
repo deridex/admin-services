@@ -58,8 +58,8 @@ public final class Nodes {
 		if (currentVersion != version) {
 			throw new ConflictException(String.format("%s '%s' is version %d not %d", type, id, version, currentVersion));
 		}
-
 	}
+
 	public static String getVersionQuery(String label) {
 		return String.format("match (n:%s { %s : { %s } }) return n.%s", label, ID_PROPERTY, ID_PROPERTY, VERSION_PROPERTY);
 	}
@@ -82,6 +82,28 @@ public final class Nodes {
 		query.append(" return n");
 
 		return query.toString();
+	}
+
+	public static String deleteNodeQuery(String label, boolean hasVersion) {
+		StringBuilder sb = new StringBuilder();
+
+		try (Formatter formatter = new Formatter(sb)) {
+			formatter.format("match (n:%s { %s: { %s }",
+					label,
+					Nodes.ID_PROPERTY,
+					Nodes.ID_PARAMETER);
+
+			if (hasVersion) {
+				formatter.format(", %s: { %s }", Nodes.VERSION_PROPERTY, Nodes.VERSION_PROPERTY);
+			}
+
+			formatter.format(" }) delete n return count(n) as numDeleted",
+					label,
+					Nodes.ID_PROPERTY,
+					Nodes.ID_PARAMETER);
+		}
+
+		return sb.toString();
 	}
 
 	private Nodes() { }

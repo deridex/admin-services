@@ -112,5 +112,25 @@ public final class Relationships {
         return sb.toString();
     }
 
+    public static String deleteInboundRelationshipsQuery(
+            String startLabel,
+            String relationshipLabel,
+            String endLabel,
+            boolean endHasVersion) {
+        StringBuilder sb = new StringBuilder();
+
+        try (Formatter formatter = new Formatter(sb)) {
+            formatter.format("match (e:%s { %s: { %s }", endLabel, Nodes.ID_PROPERTY, END_ID_PARAMETER);
+
+            if (endHasVersion) {
+                formatter.format(", %s { %s }", Nodes.VERSION_PROPERTY, END_VERSION_PARAMETER);
+            }
+
+            formatter.format(" }) optional match (:%s)-[r:%s]->(e) delete r return count(r) as numDeleted", startLabel, relationshipLabel);
+        }
+
+        return sb.toString();
+    }
+
     private Relationships() { }
 }

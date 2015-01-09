@@ -2,8 +2,10 @@ package cc.newmercy.contentservices.aws;
 
 import java.io.InputStream;
 
-import cc.newmercy.contentservices.web.api.v1.sermon.TransientAsset;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 
 public interface AssetStore {
-    void save(TransientAsset transientAsset, InputStream data);
+    void save(String key, ObjectMetadata metadata, InputStream data);
+
+    void delete(String key);
 }
