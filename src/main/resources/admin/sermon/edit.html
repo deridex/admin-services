@@ -1,4 +1,30 @@
 <div>
     <h1>Sermon</h1>
-    <nmcc-sermon-form sermon="sermonData" on-save="handleSave($event)" on-cancel="handleCancel($event)" />
+    <nmcc-sermon-form sermon="sermonData" on-save="handleSaveSermon($event)" on-cancel="handleCancel($event)" />
+</div>
+<div>
+    <h1>Assets</h1>
+    <div>
+        <table class="pure-table pure-table-horizontal pure-table-striped" ng-if="assets.length > 0">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Bytes</th>
+                <th>Content Type</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="asset in assets" ng-click="handleEditAsset(asset)">
+                <td>{{ $index + 1 }}</td>
+                <td>{{ asset.s3Key }}</td>
+                <td>{{ asset.length }}</td>
+                <td>{{ asset.contentType }}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div>
+        <nmcc-sermon-asset-form handle-file-change="handleFileChange(selectedFiles)" />
+    </div>
 </div>

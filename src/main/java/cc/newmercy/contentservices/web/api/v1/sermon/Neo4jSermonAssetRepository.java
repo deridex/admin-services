@@ -95,16 +95,12 @@ public class Neo4jSermonAssetRepository extends Neo4jRepository implements Sermo
     }
 
     @Override
-    public List<SermonAsset> list(String sermonId, int sermonVersion) {
+    public List<SermonAsset> list(String sermonId) {
         List<Result> results = post(
-                query(GET_SERMON_VERSION_QUERY, Integer.class)
-                        .set(Nodes.ID_PARAMETER, sermonId),
                 query(LIST_ASSETS_QUERY, SermonAsset.class)
                         .set(Relationships.START_ID_PARAMETER, sermonId));
 
-        Nodes.ensureVersion(results.get(0), Neo4jSermonRepository.SERMON_LABEL, sermonId, sermonVersion);
-
-        return Lists.transform(results.get(1).getData(), row -> row.getColumns().get(0));
+        return Lists.transform(results.get(0).getData(), row -> row.getColumns().get(0));
     }
 
     @Override

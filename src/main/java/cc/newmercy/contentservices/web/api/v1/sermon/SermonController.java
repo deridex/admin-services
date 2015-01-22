@@ -92,8 +92,8 @@ public class SermonController {
 
     @RequestMapping(value = "/{sermonId}/assets", method = RequestMethod.GET)
     @ResponseBody
-    public List<SermonAsset> listAssets(@PathVariable("sermonId") String sermonId, @RequestParam("v") int sermonVersion) {
-        return sermonAssetRepository.list(sermonId, sermonVersion);
+    public List<SermonAsset> listAssets(@PathVariable("sermonId") String sermonId) {
+        return sermonAssetRepository.list(sermonId);
     }
 
     @RequestMapping(value = "/{sermonId}/assets/{assetId}", method = RequestMethod.DELETE)

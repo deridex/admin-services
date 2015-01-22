@@ -1,4 +1,4 @@
-angular.module('nmcc.SermonControllers', ['ngRoute', 'nmcc.ContentServices'])
+angular.module('nmcc.SermonControllers', ['ngRoute', 'nmcc.ContentServices', 'angularFileUpload'])
 	.controller('SermonAddCtrl', ['$scope', '$log', 'contentApi', '$routeParams', '$filter', '$location', function($scope, $log, contentApi, $routeParams, $filter, $location) {
 		var sermonSeriesVersion = $scope.pageCtrl.versions['sermon-series'];
 
@@ -12,10 +12,6 @@ angular.module('nmcc.SermonControllers', ['ngRoute', 'nmcc.ContentServices'])
 
 		var yyyymmdd = function(dateTime) {
 			return dateFilter(dateTime, 'yyyy-MM-dd');
-		};
-
-		var datetime = function(yyyymmdd) {
-			return new Date(dateFilter(yyyymmdd, 'yyyy-MM-ddTHH:mm:ss.sss', 'UTC') + 'Z');
 		};
 
 		var sermonSeriesId = $routeParams.sermonSeriesId;
@@ -48,6 +44,8 @@ angular.module('nmcc.SermonControllers', ['ngRoute', 'nmcc.ContentServices'])
 
 		$scope.handleCancel = function() {
 			$log.info('cancelling new sermon');
+
+			$location.path('/' + $routeParams.sermonSeriesId);
 		};
 	}])
 	.controller('SermonEditCtrl', ['$scope', '$log', 'contentApi', '$routeParams', '$filter', '$location', '$route', function($scope, $log, contentApi, $routeParams, $filter, $location, $route) {
@@ -84,7 +82,7 @@ angular.module('nmcc.SermonControllers', ['ngRoute', 'nmcc.ContentServices'])
 			}
 		);
 
-		$scope.handleSave = function() {
+		$scope.handleSaveSermon = function() {
 			$scope.sermonEntity.name = $scope.sermonData.name;
 			$scope.sermonEntity.date = yyyymmdd($scope.sermonData.datetime);
 			$scope.sermonEntity.by = $scope.sermonData.by;
@@ -109,4 +107,25 @@ angular.module('nmcc.SermonControllers', ['ngRoute', 'nmcc.ContentServices'])
 
 			$location.path('/' + sermonSeriesId);
 		};
+
+		var assetsHandle = sermonHandle.all('assets');
+
+		$scope.assets = [];
+
+		assetsHandle.getList().then(
+			function(data) {
+				$scope.assets = data;
+			},
+			function(error) {
+				$log.error('could not get assets :' + JSON.stringify(error));
+			}
+		);
+
+		$scope.handleFileChange = function(files) {
+			$log.info('in handleAddAsset(' + JSON.stringify(files) + ')');
+		};
+
+		$scope.handleEditAsset = function(asset) {
+			$log.info('in handleEditAsset(' + JSON.stringify(asset) + ')');
+		}
 	}]);

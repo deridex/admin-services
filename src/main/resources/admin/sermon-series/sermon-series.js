@@ -9,11 +9,11 @@ angular.module('nmcc.SermonSeries', ['ngRoute', 'nmcc.SermonSeriesControllers', 
                 controller: 'SermonSeriesEditCtrl as viewCtrl',
                 templateUrl: 'edit.html'
             })
-            .when('/:sermonSeriesId/add-sermon', {
+            .when('/:sermonSeriesId/sermons', {
                 controller: 'SermonAddCtrl',
                 templateUrl: '/sermon/add.html'
             })
-            .when('/:sermonSeriesId/sermon/:sermonId', {
+            .when('/:sermonSeriesId/sermons/:sermonId', {
                 controller: 'SermonEditCtrl',
                 templateUrl: '/sermon/edit.html'
             });

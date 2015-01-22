@@ -1,4 +1,4 @@
-angular.module('nmcc.Sermon', ['nmcc.ContentServices', 'nmcc.SermonControllers'])
+angular.module('nmcc.Sermon', ['nmcc.ContentServices', 'nmcc.SermonControllers', 'nmcc.SermonAsset'])
     .directive('nmccSermonForm', [function() {
             return {
                     restrict: 'E',

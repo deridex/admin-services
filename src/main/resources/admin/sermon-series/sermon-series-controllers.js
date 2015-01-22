@@ -38,6 +38,8 @@ angular.module('nmcc.SermonSeriesControllers', ['ngRoute', 'nmcc.ContentServices
 
 		$scope.editIdx = 0;
 
+		$scope.sermons = [];
+
 		$scope.sermonsHandle = contentApi.one('sermon-series', sermonSeriesId).all('sermons');
 		$scope.sermonsHandle.getList().then(function(data) {
 			$log.info('fetched sermons ' + JSON.stringify(data));
@@ -61,10 +63,10 @@ angular.module('nmcc.SermonSeriesControllers', ['ngRoute', 'nmcc.ContentServices
 		};
 
 		$scope.handleAddSermon = function() {
-			$location.path('/' + sermonSeriesId + '/add-sermon');
+			$location.path('/' + sermonSeriesId + '/sermons');
 		};
 
 		$scope.handleEditSermon = function(sermonId) {
-			$location.path('/' + sermonSeriesId + '/sermon/' + sermonId);
+			$location.path('/' + sermonSeriesId + '/sermons/' + sermonId);
 		}
 	}]);
